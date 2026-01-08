@@ -1,0 +1,75 @@
+[project]
+name = "verifhai"
+version = "0.1.0"
+description = "HAI Security Assessment Tool - Build and measure secure Human-Assisted Intelligence systems using the HAIAMM framework"
+readme = "README.md"
+license = "GPL-3.0-or-later"
+requires-python = ">=3.10"
+authors = [
+    { name = "Verifhai Contributors" }
+]
+keywords = ["ai", "security", "haiamm", "maturity-model", "llm", "agents"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Security",
+    "Topic :: Software Development :: Quality Assurance",
+]
+dependencies = [
+    "typer>=0.9.0",
+    "rich>=13.0.0",
+    "pyyaml>=6.0",
+    "pydantic>=2.0.0",
+]
+
+[project.optional-dependencies]
+tui = [
+    "textual>=0.40.0",
+]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0.0",
+]
+all = [
+    "verifhai[tui,dev]",
+]
+
+[project.scripts]
+verifhai = "verifhai.cli:app"
+
+[project.urls]
+Homepage = "https://github.com/verifhai/verifhai"
+Documentation = "https://github.com/verifhai/verifhai#readme"
+Repository = "https://github.com/verifhai/verifhai"
+Issues = "https://github.com/verifhai/verifhai/issues"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/verifhai"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
