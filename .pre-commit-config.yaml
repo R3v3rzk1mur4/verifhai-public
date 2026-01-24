@@ -1,0 +1,120 @@
+# Pre-commit configuration for Verifhai
+# Enforces HAI security practices locally before commits
+#
+# Installation:
+#   pip install pre-commit
+#   pre-commit install
+#
+# Manual run:
+#   pre-commit run --all-files
+
+repos:
+  # ===========================================================================
+  # Secret Detection (First - Fast Fail on Credentials)
+  # ===========================================================================
+  - repo: https://github.com/trufflesecurity/trufflehog
+    rev: v3.63.7
+    hooks:
+      - id: trufflehog
+        name: TruffleHog Secret Scan
+        entry: trufflehog git file://. --since-commit HEAD --only-verified --fail
+        language: system
+        stages: [commit]
+
+  # ===========================================================================
+  # Python Code Quality
+  # ===========================================================================
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.3.0
+    hooks:
+      - id: ruff
+        name: Ruff Linter
+        args: [--fix, --exit-non-zero-on-fix]
+        types_or: [python, pyi]
+      - id: ruff-format
+        name: Ruff Formatter
+        types_or: [python, pyi]
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.8.0
+    hooks:
+      - id: mypy
+        name: MyPy Type Check
+        args: [--strict, --ignore-missing-imports]
+        additional_dependencies:
+          - typer>=0.9.0
+          - pydantic>=2.0.0
+          - types-PyYAML
+
+  # ===========================================================================
+  # Security Scanning (SAST with HAI-specific rules)
+  # ===========================================================================
+  - repo: https://github.com/semgrep/semgrep
+    rev: v1.60.0
+    hooks:
+      - id: semgrep
+        name: Semgrep HAI Security Scan
+        args:
+          - --config=ci/semgrep/hai-security.yml
+          - --config=ci/semgrep/prompt-injection.yml
+          - --config=ci/semgrep/permission-bypass.yml
+          - --config=ci/semgrep/tool-misuse.yml
+          - --error
+          - --quiet
+        types: [python]
+        stages: [commit]
+
+  # ===========================================================================
+  # General File Hygiene
+  # ===========================================================================
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-yaml
+        name: Validate YAML
+      - id: check-json
+        name: Validate JSON
+      - id: check-toml
+        name: Validate TOML
+      - id: end-of-file-fixer
+        name: Fix EOF
+      - id: trailing-whitespace
+        name: Trim Trailing Whitespace
+      - id: check-merge-conflict
+        name: Check Merge Conflicts
+      - id: detect-private-key
+        name: Detect Private Keys
+      - id: check-added-large-files
+        name: Check Large Files
+        args: [--maxkb=1000]
+      - id: no-commit-to-branch
+        name: Protect Main Branch
+        args: [--branch, main, --branch, master]
+
+  # ===========================================================================
+  # HAIAMM Template Validation (Local Hook)
+  # ===========================================================================
+  - repo: local
+    hooks:
+      - id: validate-haiamm-templates
+        name: Validate HAIAMM Templates
+        entry: python ci/scripts/template_validator.py
+        language: system
+        files: ^claude-skill/templates/.*\.md$
+        pass_filenames: true
+        stages: [commit]
+
+      - id: check-semgrep-rules
+        name: Validate Semgrep Rules
+        entry: python -c "import yaml; import sys; yaml.safe_load(open(sys.argv[1]))"
+        language: system
+        files: ^ci/semgrep/.*\.yml$
+        pass_filenames: true
+
+# Configuration
+ci:
+  autofix_commit_msg: |
+    [pre-commit.ci] auto fixes from pre-commit hooks
+  autoupdate_commit_msg: |
+    [pre-commit.ci] pre-commit autoupdate
+  skip: [trufflehog]  # Skip in CI (runs separately)

@@ -1,0 +1,92 @@
+# TruffleHog Configuration for Verifhai
+# Secret detection configuration
+#
+# Documentation: https://github.com/trufflesecurity/trufflehog
+
+# Detectors to enable
+detectors:
+  - AWS
+  - Azure
+  - GCP
+  - GitHub
+  - GitLab
+  - Slack
+  - Stripe
+  - Twilio
+  - SendGrid
+  - OpenAI
+  - Anthropic
+  - HuggingFace
+  - PrivateKey
+  - JWT
+
+# Paths to exclude from scanning
+exclude_paths:
+  # Test fixtures (may contain fake secrets for testing)
+  - tests/fixtures/
+  - tests/data/
+
+  # Documentation examples
+  - docs/examples/
+
+  # Generated files
+  - "*.pyc"
+  - __pycache__/
+  - "*.egg-info/"
+  - dist/
+  - build/
+  - .eggs/
+
+  # IDE and editor files
+  - .idea/
+  - .vscode/
+  - "*.swp"
+  - "*.swo"
+
+  # Virtual environments
+  - venv/
+  - .venv/
+  - env/
+
+  # Coverage and test output
+  - htmlcov/
+  - .coverage
+  - coverage.xml
+  - "*.cover"
+
+# Custom patterns to detect (in addition to built-in detectors)
+# These are HAI-specific patterns that might leak
+custom_patterns:
+  - name: anthropic_api_key
+    regex: 'sk-ant-[a-zA-Z0-9]{32,}'
+    keywords:
+      - anthropic
+      - claude
+
+  - name: openai_api_key
+    regex: 'sk-[a-zA-Z0-9]{48}'
+    keywords:
+      - openai
+      - gpt
+
+  - name: huggingface_token
+    regex: 'hf_[a-zA-Z0-9]{34}'
+    keywords:
+      - huggingface
+      - transformers
+
+# Verification settings
+verification:
+  # Only report verified secrets (reduces false positives)
+  only_verified: true
+
+  # Timeout for verification requests
+  timeout: 10
+
+# Output settings
+output:
+  # Format: json, plain, github
+  format: json
+
+  # Include raw secret value in output (use with caution)
+  include_raw: false

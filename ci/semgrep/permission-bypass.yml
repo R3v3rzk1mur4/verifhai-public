@@ -1,0 +1,286 @@
+# Permission Bypass Detection Rules for Semgrep
+# Detects Excessive Agency (EA) vulnerabilities in permission systems
+#
+# HAIAMM Practice: SR (Security Requirements), IR (Implementation Review)
+# HAI Threats: EA (Excessive Agency)
+
+rules:
+  # ===========================================================================
+  # HARDCODED PERMISSIONS (Bypass Risk)
+  # ===========================================================================
+
+  - id: hai-ea-hardcoded-allow
+    patterns:
+      - pattern-either:
+          - pattern: |
+              def $CHECK_FUNC(...):
+                  ...
+                  return True
+          - pattern: |
+              def $CHECK_FUNC(...):
+                  ...
+                  allowed = True
+                  return allowed
+      - metavariable-regex:
+          metavariable: $CHECK_FUNC
+          regex: (check_permission|is_allowed|can_access|has_permission|verify_access|authorize)
+    message: |
+      Permission check function returns hardcoded True.
+
+      Risk: Excessive Agency (EA) - All actions would be permitted.
+
+      Permission checks MUST:
+      1. Verify against explicit policy (allowlist/denylist)
+      2. Default to DENY if not explicitly allowed
+      3. Log the decision with context
+      4. Include the reason for allow/deny
+
+      HAIAMM Practice: SR (Security Requirements) - Permission model
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: SR
+      hai-threat: EA
+      cwe: "CWE-863"
+      confidence: HIGH
+    severity: ERROR
+    languages: [python]
+
+  - id: hai-ea-permission-always-true
+    patterns:
+      - pattern: |
+          $PERMISSION = True
+          ...
+          if $PERMISSION:
+              ...
+      - pattern-not-inside: |
+          $PERMISSION = $CHECK(...)
+          ...
+    message: |
+      Permission variable set to True without actual check.
+
+      Risk: Excessive Agency (EA) - Permission check bypassed.
+
+      Always derive permission from actual policy check.
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: SR
+      hai-threat: EA
+      cwe: "CWE-863"
+      confidence: MEDIUM
+    severity: WARNING
+    languages: [python]
+
+  # ===========================================================================
+  # MISSING PERMISSION CHECKS
+  # ===========================================================================
+
+  - id: hai-ea-file-op-no-permission
+    patterns:
+      - pattern-either:
+          - pattern: |
+              def $FUNC(...):
+                  ...
+                  open($PATH, ...)
+                  ...
+          - pattern: |
+              def $FUNC(...):
+                  ...
+                  Path($PATH).read_text()
+                  ...
+          - pattern: |
+              def $FUNC(...):
+                  ...
+                  Path($PATH).write_text(...)
+                  ...
+          - pattern: |
+              def $FUNC(...):
+                  ...
+                  os.remove($PATH)
+                  ...
+      - pattern-not-inside: |
+          def $FUNC(...):
+              ...
+              if not check_permission(...):
+                  raise ...
+              ...
+      - pattern-not-inside: |
+          def $FUNC(...):
+              ...
+              if not is_allowed(...):
+                  return ...
+              ...
+      - pattern-not-inside: |
+          @requires_permission(...)
+          def $FUNC(...):
+              ...
+    message: |
+      File operation without visible permission check.
+
+      Risk: Excessive Agency (EA) - Unauthorized file access.
+
+      All file operations MUST:
+      1. Check permission before access
+      2. Validate path is within allowed scope
+      3. Log the access attempt
+      4. Handle denial gracefully
+
+      HAIAMM Practice: SR (Security Requirements) - Define file access boundaries
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: SR
+      hai-threat: EA
+      cwe: "CWE-862"
+      confidence: MEDIUM
+    severity: WARNING
+    languages: [python]
+
+  - id: hai-ea-network-op-no-permission
+    patterns:
+      - pattern-either:
+          - pattern: |
+              def $FUNC(...):
+                  ...
+                  requests.get($URL, ...)
+                  ...
+          - pattern: |
+              def $FUNC(...):
+                  ...
+                  requests.post($URL, ...)
+                  ...
+          - pattern: |
+              def $FUNC(...):
+                  ...
+                  httpx.$METHOD($URL, ...)
+                  ...
+      - pattern-not-inside: |
+          def $FUNC(...):
+              ...
+              if not is_allowed_url(...):
+                  ...
+              ...
+    message: |
+      Network request without URL validation.
+
+      Risk: Excessive Agency (EA) - Agent could access unauthorized URLs.
+
+      Network operations should:
+      1. Validate URL against allowlist
+      2. Check for SSRF patterns (internal IPs, localhost)
+      3. Log all external requests
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: SR
+      hai-threat: EA
+      cwe: "CWE-918"
+      confidence: LOW
+    severity: INFO
+    languages: [python]
+
+  # ===========================================================================
+  # MISSING DENIAL LOGGING
+  # ===========================================================================
+
+  - id: hai-ea-denial-no-logging
+    patterns:
+      - pattern: |
+          if not $PERMISSION:
+              return False
+      - pattern-not-inside: |
+          if not $PERMISSION:
+              $LOGGER.$LEVEL(...)
+              return False
+      - pattern-not-inside: |
+          if not $PERMISSION:
+              log_denial(...)
+              return False
+    message: |
+      Permission denial without logging.
+
+      Risk: Missing audit trail for security-relevant events.
+
+      All permission denials MUST be logged for:
+      1. Security audit trail
+      2. Incident detection (many denials = potential attack)
+      3. Debugging permission issues
+      4. Compliance requirements
+
+      HAIAMM Practice: ML (Monitoring & Logging)
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: ML
+      hai-threat: EA
+      cwe: "CWE-778"
+      confidence: MEDIUM
+    severity: WARNING
+    languages: [python]
+
+  - id: hai-ea-silent-permission-failure
+    patterns:
+      - pattern-either:
+          - pattern: |
+              try:
+                  $CHECK_PERMISSION(...)
+              except:
+                  pass
+          - pattern: |
+              try:
+                  $CHECK_PERMISSION(...)
+              except $EXC:
+                  ...
+              # No re-raise or return False
+    message: |
+      Permission check exception silently caught.
+
+      Risk: Excessive Agency (EA) - Permission failures could be ignored.
+
+      Permission check failures should:
+      1. Log the failure with context
+      2. Default to DENY (fail secure)
+      3. Alert if unexpected
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: SR
+      hai-threat: EA
+      cwe: "CWE-754"
+      confidence: MEDIUM
+    severity: WARNING
+    languages: [python]
+
+  # ===========================================================================
+  # PERMISSION ESCALATION
+  # ===========================================================================
+
+  - id: hai-ea-permission-modification
+    patterns:
+      - pattern-either:
+          - pattern: $PERMISSIONS.add($NEW_PERM)
+          - pattern: $PERMISSIONS.append($NEW_PERM)
+          - pattern: $PERMISSIONS[$KEY] = $VALUE
+          - pattern: setattr($OBJ, "permissions", $VALUE)
+    message: |
+      Permission set being modified at runtime.
+
+      Risk: Excessive Agency (EA) - Privilege escalation.
+
+      Permissions should be:
+      1. Defined at initialization
+      2. Immutable during execution
+      3. Only modifiable by authorized admin functions
+      4. Logged when changed
+
+      Review if this modification is authorized.
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: SR
+      hai-threat: EA
+      cwe: "CWE-269"
+      confidence: LOW
+    severity: INFO
+    languages: [python]
