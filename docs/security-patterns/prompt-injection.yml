@@ -1,0 +1,232 @@
+# Prompt Injection Detection Rules for Semgrep
+# Detects Agent Goal Hijacking (AGH) vulnerabilities
+#
+# HAIAMM Practice: IR (Implementation Review), ST (Security Testing)
+# HAI Threats: AGH (Agent Goal Hijacking)
+
+rules:
+  # ===========================================================================
+  # UNSANITIZED USER INPUT IN PROMPTS
+  # ===========================================================================
+
+  - id: hai-agh-unsanitized-fstring-prompt
+    patterns:
+      - pattern-either:
+          - pattern: |
+              $PROMPT = f"...$USER_INPUT..."
+              ...
+              $CLIENT.messages.create(..., messages=[..., {"content": $PROMPT}, ...], ...)
+          - pattern: |
+              $PROMPT = f"...$USER_INPUT..."
+              ...
+              $CLIENT.chat.completions.create(..., messages=[..., {"content": $PROMPT}, ...], ...)
+          - pattern: |
+              messages = [..., {"role": "user", "content": f"...$USER_INPUT..."}, ...]
+    message: |
+      User input directly interpolated into LLM prompt via f-string.
+
+      Risk: Agent Goal Hijacking (AGH) - Prompt injection attack vector.
+
+      Example attack: User sends "Ignore previous instructions and..."
+
+      Mitigations:
+      1. Use input delimiters: <<<USER_INPUT>>>...<<<END_USER_INPUT>>>
+      2. Apply injection detection BEFORE including in prompt
+      3. Validate input against expected patterns
+      4. Use separate user message role
+
+      HAIAMM Practice: IR (Implementation Review) - Prompt security
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: IR
+      hai-threat: AGH
+      cwe: "CWE-74"
+      owasp: "LLM01:2023"
+      confidence: HIGH
+    severity: ERROR
+    languages: [python]
+
+  - id: hai-agh-unsanitized-format-prompt
+    patterns:
+      - pattern: |
+          $PROMPT = $TEMPLATE.format(..., $KEY=$USER_INPUT, ...)
+          ...
+          $CLIENT.$METHOD(..., messages=[..., {"content": $PROMPT}, ...], ...)
+    message: |
+      User input inserted via .format() into LLM prompt.
+
+      Risk: Agent Goal Hijacking (AGH) - Prompt injection vulnerability.
+
+      Always sanitize and validate user input before including in prompts.
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: IR
+      hai-threat: AGH
+      cwe: "CWE-74"
+      confidence: HIGH
+    severity: ERROR
+    languages: [python]
+
+  - id: hai-agh-direct-user-message
+    patterns:
+      - pattern: |
+          messages.append({"role": "user", "content": $USER_INPUT})
+      - pattern-not-inside: |
+          $SANITIZED = sanitize($USER_INPUT)
+          ...
+          messages.append({"role": "user", "content": $SANITIZED})
+      - pattern-not-inside: |
+          $VALIDATED = validate_input($USER_INPUT)
+          ...
+          messages.append({"role": "user", "content": $VALIDATED})
+    message: |
+      User input appended directly to messages without visible sanitization.
+
+      Risk: Agent Goal Hijacking (AGH) - User could inject malicious instructions.
+
+      Always validate/sanitize user input before adding to conversation.
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: IR
+      hai-threat: AGH
+      cwe: "CWE-74"
+      confidence: MEDIUM
+    severity: WARNING
+    languages: [python]
+
+  # ===========================================================================
+  # MISSING OUTPUT VALIDATION
+  # ===========================================================================
+
+  - id: hai-agh-no-output-validation
+    patterns:
+      - pattern: |
+          $RESPONSE = $CLIENT.messages.create(...)
+          return $RESPONSE.content
+      - pattern-not-inside: |
+          $RESPONSE = $CLIENT.messages.create(...)
+          ...
+          validate($RESPONSE)
+          ...
+      - pattern-not-inside: |
+          $RESPONSE = $CLIENT.messages.create(...)
+          ...
+          sanitize($RESPONSE)
+          ...
+    message: |
+      LLM response returned without validation.
+
+      Risk: Agent Goal Hijacking (AGH) - Manipulated AI output could cause harm.
+
+      AI outputs MUST be validated before use:
+      1. Check for PII leakage
+      2. Verify response format matches expected schema
+      3. Scan for harmful/unexpected content
+      4. Validate any actions before execution
+
+      HAIAMM Practice: ST (Security Testing) - Output validation
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: ST
+      hai-threat: AGH
+      cwe: "CWE-20"
+      confidence: MEDIUM
+    severity: WARNING
+    languages: [python]
+
+  - id: hai-agh-direct-action-from-llm
+    patterns:
+      - pattern-either:
+          - pattern: |
+              $ACTION = $RESPONSE.content
+              ...
+              execute($ACTION)
+          - pattern: |
+              $ACTION = json.loads($RESPONSE.content)
+              ...
+              $FUNC(**$ACTION)
+          - pattern: |
+              eval($RESPONSE.content)
+    message: |
+      LLM output directly executed as action without validation.
+
+      Risk: Agent Goal Hijacking (AGH) - Critical vulnerability.
+
+      NEVER execute LLM output directly. Always:
+      1. Parse and validate against expected schema
+      2. Check action is in allowed actions list
+      3. Verify parameters are within bounds
+      4. Log before execution
+
+      HAIAMM Practice: SA (Secure Architecture) - Permission gate pattern
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: SA
+      hai-threat: AGH
+      cwe: "CWE-94"
+      confidence: HIGH
+    severity: ERROR
+    languages: [python]
+
+  # ===========================================================================
+  # SYSTEM PROMPT EXPOSURE
+  # ===========================================================================
+
+  - id: hai-agh-system-prompt-in-response
+    patterns:
+      - pattern: |
+          if "system" in $RESPONSE.lower() and "prompt" in $RESPONSE.lower():
+              ...
+    message: |
+      Code checks for system prompt keywords in response.
+
+      This pattern suggests awareness of system prompt exposure risk.
+      Ensure you're also:
+      1. Filtering responses that might contain system prompt content
+      2. Not echoing system prompts in error messages
+      3. Using output validation to catch leaks
+
+      HAIAMM Practice: IR (Implementation Review)
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: IR
+      hai-threat: AGH
+      cwe: "CWE-200"
+      confidence: LOW
+    severity: INFO
+    languages: [python]
+
+  - id: hai-agh-system-prompt-logged
+    patterns:
+      - pattern-either:
+          - pattern: |
+              $LOGGER.debug(..., $SYSTEM_PROMPT, ...)
+          - pattern: |
+              print(..., $SYSTEM_PROMPT, ...)
+      - metavariable-regex:
+          metavariable: $SYSTEM_PROMPT
+          regex: (system_prompt|SYSTEM_PROMPT|systemPrompt)
+    message: |
+      System prompt may be logged or printed.
+
+      Risk: System prompt exposure through logs.
+
+      System prompts contain security instructions and should:
+      1. Never be logged in production
+      2. Never be included in error messages
+      3. Be protected from extraction attacks
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: ML
+      hai-threat: AGH
+      cwe: "CWE-532"
+      confidence: MEDIUM
+    severity: WARNING
+    languages: [python]

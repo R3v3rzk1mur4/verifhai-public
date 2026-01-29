@@ -1,0 +1,287 @@
+# Tool Misuse Detection Rules for Semgrep
+# Detects Tool Misuse (TM) vulnerabilities
+#
+# HAIAMM Practice: IR (Implementation Review), ST (Security Testing)
+# HAI Threats: TM (Tool Misuse)
+
+rules:
+  # ===========================================================================
+  # PATH TRAVERSAL
+  # ===========================================================================
+
+  - id: hai-tm-path-traversal-check
+    patterns:
+      - pattern-either:
+          - pattern: open($PATH, ...)
+          - pattern: Path($PATH)
+          - pattern: os.path.join($BASE, $PATH)
+      - pattern-not-inside: |
+          if ".." in $PATH:
+              ...
+          ...
+      - pattern-not-inside: |
+          $SAFE_PATH = validate_path($PATH)
+          ...
+      - pattern-not-inside: |
+          $SAFE_PATH = sanitize_path($PATH)
+          ...
+    message: |
+      File path operation without visible traversal check.
+
+      Risk: Tool Misuse (TM) - Path traversal attack (../ sequences).
+
+      Validate paths before use:
+      ```python
+      def safe_path(base: Path, user_path: str) -> Path:
+          # Resolve to absolute and check it's under base
+          full_path = (base / user_path).resolve()
+          if not str(full_path).startswith(str(base.resolve())):
+              raise ValueError("Path traversal detected")
+          return full_path
+      ```
+
+      HAIAMM Practice: IR (Implementation Review)
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: IR
+      hai-threat: TM
+      cwe: "CWE-22"
+      owasp: "A01:2021"
+      confidence: MEDIUM
+    severity: WARNING
+    languages: [python]
+
+  - id: hai-tm-path-traversal-pattern
+    patterns:
+      - pattern-regex: '\.\.\/'
+    message: |
+      Literal path traversal pattern detected in code.
+
+      Risk: Tool Misuse (TM) - Hardcoded traversal is suspicious.
+
+      Review why ../ is present. If for legitimate purposes, document clearly.
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: IR
+      hai-threat: TM
+      cwe: "CWE-22"
+      confidence: LOW
+    severity: INFO
+    languages: [python]
+
+  # ===========================================================================
+  # UNSAFE DESERIALIZATION
+  # ===========================================================================
+
+  - id: hai-tm-pickle-load
+    patterns:
+      - pattern-either:
+          - pattern: pickle.loads($DATA)
+          - pattern: pickle.load($FILE)
+    message: |
+      Pickle deserialization detected.
+
+      Risk: Tool Misuse (TM) - Arbitrary code execution via malicious pickle.
+
+      NEVER unpickle untrusted data. Use:
+      - JSON for structured data
+      - Protocol buffers for binary data
+      - Safe serialization libraries
+
+      If pickle is required for trusted internal data, add comment explaining why.
+
+      HAIAMM Practice: IR (Implementation Review)
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: IR
+      hai-threat: TM
+      cwe: "CWE-502"
+      owasp: "A08:2021"
+      confidence: HIGH
+    severity: ERROR
+    languages: [python]
+
+  - id: hai-tm-yaml-unsafe-load
+    patterns:
+      - pattern-either:
+          - pattern: yaml.load($DATA)
+          - pattern: yaml.load($DATA, Loader=yaml.Loader)
+          - pattern: yaml.load($DATA, Loader=yaml.UnsafeLoader)
+          - pattern: yaml.unsafe_load($DATA)
+    message: |
+      Unsafe YAML loading detected.
+
+      Risk: Tool Misuse (TM) - Arbitrary code execution via YAML.
+
+      Always use yaml.safe_load():
+      ```python
+      data = yaml.safe_load(yaml_string)
+      ```
+
+      HAIAMM Practice: IR (Implementation Review)
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: IR
+      hai-threat: TM
+      cwe: "CWE-502"
+      confidence: HIGH
+    severity: ERROR
+    languages: [python]
+
+  # ===========================================================================
+  # SQL INJECTION
+  # ===========================================================================
+
+  - id: hai-tm-sql-injection
+    patterns:
+      - pattern-either:
+          - pattern: |
+              $QUERY = f"SELECT ... {$USER_INPUT} ..."
+              $CURSOR.execute($QUERY)
+          - pattern: |
+              $QUERY = "SELECT ... %s ..." % $USER_INPUT
+              $CURSOR.execute($QUERY)
+          - pattern: |
+              $CURSOR.execute(f"... {$USER_INPUT} ...")
+    message: |
+      SQL query with string interpolation detected.
+
+      Risk: Tool Misuse (TM) - SQL injection vulnerability.
+
+      Use parameterized queries:
+      ```python
+      cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+      ```
+
+      HAIAMM Practice: IR (Implementation Review)
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: IR
+      hai-threat: TM
+      cwe: "CWE-89"
+      owasp: "A03:2021"
+      confidence: HIGH
+    severity: ERROR
+    languages: [python]
+
+  # ===========================================================================
+  # COMMAND INJECTION
+  # ===========================================================================
+
+  - id: hai-tm-shell-injection
+    patterns:
+      - pattern-either:
+          - pattern: subprocess.run($CMD, shell=True, ...)
+          - pattern: subprocess.call($CMD, shell=True, ...)
+          - pattern: subprocess.Popen($CMD, shell=True, ...)
+      - metavariable-regex:
+          metavariable: $CMD
+          regex: '^f".*'
+    message: |
+      Shell command with f-string and shell=True detected.
+
+      Risk: Tool Misuse (TM) - Command injection vulnerability.
+
+      Never use shell=True with user input. Use:
+      ```python
+      subprocess.run(["command", "arg1", "arg2"], shell=False)
+      ```
+
+      HAIAMM Practice: IR (Implementation Review)
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: IR
+      hai-threat: TM
+      cwe: "CWE-78"
+      owasp: "A03:2021"
+      confidence: HIGH
+    severity: ERROR
+    languages: [python]
+
+  # ===========================================================================
+  # TOOL SCHEMA VALIDATION
+  # ===========================================================================
+
+  - id: hai-tm-tool-no-schema
+    patterns:
+      - pattern: |
+          def $TOOL_FUNC($PARAMS):
+              ...
+              $FILE_OR_NET_OP
+              ...
+      - metavariable-regex:
+          metavariable: $TOOL_FUNC
+          regex: (tool_|execute_|run_|invoke_)
+      - pattern-not-inside: |
+          @validate_schema(...)
+          def $TOOL_FUNC(...):
+              ...
+      - pattern-not-inside: |
+          def $TOOL_FUNC($PARAMS: $SCHEMA):
+              ...
+    message: |
+      Tool function without visible schema validation.
+
+      Risk: Tool Misuse (TM) - Invalid parameters could cause unexpected behavior.
+
+      All tools should:
+      1. Define input schema (Pydantic, dataclass, etc.)
+      2. Validate inputs before execution
+      3. Return structured output
+
+      HAIAMM Practice: SA (Secure Architecture) - Tool sandboxing pattern
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: SA
+      hai-threat: TM
+      cwe: "CWE-20"
+      confidence: LOW
+    severity: INFO
+    languages: [python]
+
+  # ===========================================================================
+  # SSRF (Server-Side Request Forgery)
+  # ===========================================================================
+
+  - id: hai-tm-ssrf-internal-ip
+    patterns:
+      - pattern-either:
+          - pattern: requests.get($URL, ...)
+          - pattern: requests.post($URL, ...)
+          - pattern: httpx.get($URL, ...)
+          - pattern: urllib.request.urlopen($URL)
+      - pattern-not-inside: |
+          if is_safe_url($URL):
+              ...
+      - pattern-not-inside: |
+          $VALIDATED = validate_url($URL)
+          ...
+    message: |
+      HTTP request without URL validation.
+
+      Risk: Tool Misuse (TM) - SSRF could access internal services.
+
+      Validate URLs to prevent SSRF:
+      - Block internal IP ranges (10.x, 172.16-31.x, 192.168.x, 127.x)
+      - Block localhost, 0.0.0.0
+      - Block cloud metadata endpoints (169.254.169.254)
+      - Use URL allowlists when possible
+
+      HAIAMM Practice: IR (Implementation Review)
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: IR
+      hai-threat: TM
+      cwe: "CWE-918"
+      owasp: "A10:2021"
+      confidence: LOW
+    severity: INFO
+    languages: [python]
