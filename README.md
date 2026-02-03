@@ -1,5 +1,5 @@
 # Verifhai
-
+![Verifhai Logo](verifhai_logo.png)
 **Build Security In, Don't Bolt It On**
 
 Verifhai is a security framework and toolset for building secure **Human-Assisted Intelligence (HAI)** systems. It provides structured guidance, assessments, and templates using the **HAIAMM** (Human-Assisted Intelligence Application Maturity Model) framework.
