@@ -1,0 +1,318 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "VerifhaiProgress",
+  "description": "State tracking schema for Verifhai HAIAMM assessments and practice building",
+  "type": "object",
+  "required": ["version", "project", "practices"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Schema version for compatibility checking",
+      "const": "1.0"
+    },
+    "project": {
+      "type": "object",
+      "description": "Project metadata",
+      "required": ["name", "createdAt", "lastUpdated"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Project or system name"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["agent", "llm", "pipeline", "infrastructure", "other"],
+          "description": "Type of AI system"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief description of the AI system"
+        },
+        "riskLevel": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"],
+          "description": "Overall risk level based on capabilities and data access"
+        },
+        "primaryDomain": {
+          "type": "string",
+          "enum": ["Software", "Data", "Infrastructure", "Vendors", "Processes", "Endpoints"],
+          "description": "Primary HAIAMM domain for this project"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When Verifhai tracking was initialized"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last activity timestamp"
+        }
+      }
+    },
+    "practices": {
+      "type": "object",
+      "description": "Progress tracking for each of the 12 HAIAMM practices",
+      "properties": {
+        "SM": { "$ref": "#/$defs/practiceProgress" },
+        "PC": { "$ref": "#/$defs/practiceProgress" },
+        "EG": { "$ref": "#/$defs/practiceProgress" },
+        "TA": { "$ref": "#/$defs/practiceProgress" },
+        "SR": { "$ref": "#/$defs/practiceProgress" },
+        "SA": { "$ref": "#/$defs/practiceProgress" },
+        "DR": { "$ref": "#/$defs/practiceProgress" },
+        "IR": { "$ref": "#/$defs/practiceProgress" },
+        "ST": { "$ref": "#/$defs/practiceProgress" },
+        "IM": { "$ref": "#/$defs/practiceProgress" },
+        "EH": { "$ref": "#/$defs/practiceProgress" },
+        "ML": { "$ref": "#/$defs/practiceProgress" }
+      },
+      "additionalProperties": false
+    },
+    "assessments": {
+      "type": "array",
+      "description": "History of maturity assessments",
+      "items": {
+        "type": "object",
+        "required": ["id", "date", "type", "scores"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique assessment identifier"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["quick", "full", "domain", "practice"],
+            "description": "Assessment scope"
+          },
+          "domain": {
+            "type": "string",
+            "enum": ["Software", "Data", "Infrastructure", "Vendors", "Processes", "Endpoints", "All"],
+            "description": "Domain assessed (for domain assessments)"
+          },
+          "scores": {
+            "type": "object",
+            "description": "Practice scores (0.0-3.0)",
+            "additionalProperties": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 3
+            }
+          },
+          "overallScore": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 3,
+            "description": "Average score across assessed practices"
+          },
+          "gaps": {
+            "type": "array",
+            "description": "Identified gaps from this assessment",
+            "items": {
+              "type": "object",
+              "properties": {
+                "practice": { "type": "string" },
+                "domain": { "type": "string" },
+                "level": { "type": "integer", "minimum": 1, "maximum": 3 },
+                "question": { "type": "string" },
+                "priority": {
+                  "type": "string",
+                  "enum": ["critical", "high", "medium", "low"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "description": "Generated security artifacts and their locations",
+      "properties": {
+        "securityRequirements": {
+          "type": "string",
+          "description": "Path to security requirements document"
+        },
+        "threatModel": {
+          "type": "string",
+          "description": "Path to threat model document"
+        },
+        "architectureDiagram": {
+          "type": "string",
+          "description": "Path to security architecture diagram"
+        },
+        "reviewChecklist": {
+          "type": "string",
+          "description": "Path to code review checklist"
+        },
+        "testPlan": {
+          "type": "string",
+          "description": "Path to security test plan"
+        },
+        "monitoringConfig": {
+          "type": "string",
+          "description": "Path to monitoring configuration"
+        }
+      },
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "sessions": {
+      "type": "array",
+      "description": "History of Verifhai sessions for continuity",
+      "items": {
+        "type": "object",
+        "required": ["date", "workflow"],
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "workflow": {
+            "type": "string",
+            "description": "Which workflow was executed"
+          },
+          "practice": {
+            "type": "string",
+            "description": "Practice worked on (if applicable)"
+          },
+          "summary": {
+            "type": "string",
+            "description": "Brief summary of what was accomplished"
+          },
+          "actionsCompleted": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "nextSteps": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+    "roadmap": {
+      "type": "object",
+      "description": "Generated improvement roadmap",
+      "properties": {
+        "generatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "targetLevel": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3
+        },
+        "phases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "duration": { "type": "string" },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "practice": { "type": "string" },
+                    "domain": { "type": "string" },
+                    "targetLevel": { "type": "integer" },
+                    "effort": {
+                      "type": "string",
+                      "enum": ["XS", "S", "M", "L", "XL"]
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": ["pending", "in_progress", "completed", "blocked"]
+                    },
+                    "blockedBy": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "practiceProgress": {
+      "type": "object",
+      "description": "Progress for a single practice",
+      "properties": {
+        "level": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Current maturity level achieved (0 = not started)"
+        },
+        "domain": {
+          "type": "string",
+          "enum": ["Software", "Data", "Infrastructure", "Vendors", "Processes", "Endpoints"],
+          "description": "Primary domain this practice was built for"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["not_started", "in_progress", "level_1", "level_2", "level_3"],
+          "description": "Current status"
+        },
+        "evidence": {
+          "type": "array",
+          "description": "Evidence artifacts supporting the maturity level",
+          "items": {
+            "type": "object",
+            "properties": {
+              "level": { "type": "integer", "minimum": 1, "maximum": 3 },
+              "question": { "type": "string" },
+              "type": {
+                "type": "string",
+                "enum": ["document", "screenshot", "url", "code", "config", "other"]
+              },
+              "path": { "type": "string" },
+              "description": { "type": "string" },
+              "capturedAt": { "type": "string", "format": "date-time" }
+            }
+          }
+        },
+        "l1Questions": {
+          "type": "object",
+          "description": "Level 1 question responses (question ID -> yes/no)",
+          "additionalProperties": { "type": "boolean" }
+        },
+        "l2Questions": {
+          "type": "object",
+          "description": "Level 2 question responses",
+          "additionalProperties": { "type": "boolean" }
+        },
+        "l3Questions": {
+          "type": "object",
+          "description": "Level 3 question responses",
+          "additionalProperties": { "type": "boolean" }
+        },
+        "startedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "completedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When current level was achieved"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Additional notes about this practice"
+        }
+      }
+    }
+  }
+}
