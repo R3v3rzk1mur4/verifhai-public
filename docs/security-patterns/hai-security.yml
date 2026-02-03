@@ -1,0 +1,271 @@
+# HAI Security Rules for Semgrep
+# Detects Excessive Agency (EA) and Rogue Agent (RA) threats
+#
+# HAIAMM Practice: SA (Secure Architecture), SR (Security Requirements)
+# HAI Threats: EA, RA
+
+rules:
+  # ===========================================================================
+  # EXCESSIVE AGENCY (EA) - Dangerous Imports
+  # ===========================================================================
+
+  - id: hai-ea-dangerous-subprocess
+    patterns:
+      - pattern-either:
+          - pattern: import subprocess
+          - pattern: from subprocess import $X
+    message: |
+      Subprocess module imported. AI agents should not have direct shell access.
+
+      Risk: Excessive Agency (EA) - AI could execute arbitrary system commands.
+
+      Recommendations:
+      1. Use explicit tool definitions with permission boundaries
+      2. If subprocess is required, wrap with permission checks
+      3. Log all subprocess invocations
+
+      HAIAMM Practice: SR (Security Requirements) - Define allowed actions
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: SR
+      hai-threat: EA
+      cwe: "CWE-78"
+      owasp: "A03:2021"
+      confidence: MEDIUM
+      references:
+        - https://owasp.org/www-project-top-10-for-large-language-model-applications/
+    severity: WARNING
+    languages: [python]
+
+  - id: hai-ea-dangerous-os-system
+    patterns:
+      - pattern-either:
+          - pattern: os.system($CMD)
+          - pattern: os.popen($CMD)
+          - pattern: os.spawn$FUNC(...)
+    message: |
+      Direct OS command execution detected. This bypasses permission boundaries.
+
+      Risk: Excessive Agency (EA) - AI could execute arbitrary system commands.
+
+      Use subprocess with explicit command lists and permission checks instead.
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: SR
+      hai-threat: EA
+      cwe: "CWE-78"
+      confidence: HIGH
+    severity: ERROR
+    languages: [python]
+
+  # ===========================================================================
+  # EXCESSIVE AGENCY (EA) - Dynamic Code Execution
+  # ===========================================================================
+
+  - id: hai-ea-eval-exec
+    patterns:
+      - pattern-either:
+          - pattern: eval($X)
+          - pattern: exec($X)
+          - pattern: compile($X, ...)
+    message: |
+      Dynamic code execution detected (eval/exec/compile).
+
+      Risk: Excessive Agency (EA) - AI could execute arbitrary Python code.
+
+      AI agents should NEVER use eval/exec. Use:
+      1. Explicit function calls
+      2. Sandboxed execution environments
+      3. AST-based safe evaluation if needed
+
+      HAIAMM Practice: SA (Secure Architecture) - Containment patterns
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: SA
+      hai-threat: EA
+      cwe: "CWE-94"
+      confidence: HIGH
+    severity: ERROR
+    languages: [python]
+
+  - id: hai-ea-dynamic-import
+    patterns:
+      - pattern: __import__($X)
+    message: |
+      Dynamic import detected. This could allow loading arbitrary modules.
+
+      Risk: Excessive Agency (EA) - AI could import dangerous modules.
+
+      Use explicit imports and maintain an allowlist of permitted modules.
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: SA
+      hai-threat: EA
+      cwe: "CWE-94"
+      confidence: MEDIUM
+    severity: WARNING
+    languages: [python]
+
+  # ===========================================================================
+  # ROGUE AGENT (RA) - Unbounded Loops
+  # ===========================================================================
+
+  - id: hai-ra-infinite-while-loop
+    patterns:
+      - pattern: |
+          while True:
+              ...
+      - pattern-not-inside: |
+          while True:
+              ...
+              if ...:
+                  break
+              ...
+      - pattern-not-inside: |
+          while True:
+              ...
+              return ...
+    message: |
+      Infinite while loop without break condition detected.
+
+      Risk: Rogue Agent (RA) - Agent could run indefinitely, exhausting resources.
+
+      Requirements:
+      1. Add iteration limits
+      2. Add timeout mechanisms
+      3. Implement kill switch capability
+
+      HAIAMM Practice: SA (Secure Architecture) - Containment controls
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: SA
+      hai-threat: RA
+      cwe: "CWE-835"
+      confidence: MEDIUM
+    severity: WARNING
+    languages: [python]
+
+  - id: hai-ra-missing-iteration-limit
+    patterns:
+      - pattern: |
+          for $ITEM in $ITER:
+              ...
+              $FUNC(...)
+              ...
+      - metavariable-regex:
+          metavariable: $FUNC
+          regex: (call_tool|execute|invoke|run_agent|process)
+    pattern-not-inside: |
+      if $COUNT > $LIMIT:
+          ...
+      for $ITEM in $ITER:
+          ...
+    message: |
+      Loop calling tools/agents without visible iteration limit.
+
+      Risk: Rogue Agent (RA) - Unbounded tool calls could exhaust resources or cause harm.
+
+      Add explicit iteration limits before loops that invoke tools.
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: SA
+      hai-threat: RA
+      cwe: "CWE-834"
+      confidence: LOW
+    severity: INFO
+    languages: [python]
+
+  # ===========================================================================
+  # ROGUE AGENT (RA) - Unbounded Recursion
+  # ===========================================================================
+
+  - id: hai-ra-unbounded-recursion
+    patterns:
+      - pattern: |
+          def $FUNC(...):
+              ...
+              $FUNC(...)
+      - pattern-not-inside: |
+          def $FUNC(..., $DEPTH, ...):
+              if $DEPTH > $LIMIT:
+                  ...
+              ...
+              $FUNC(..., $DEPTH + 1, ...)
+      - pattern-not-inside: |
+          def $FUNC(..., $DEPTH=..., ...):
+              if $DEPTH > $LIMIT:
+                  ...
+              ...
+    message: |
+      Recursive function without depth limit detected.
+
+      Risk: Rogue Agent (RA) - Unbounded recursion causes stack overflow and resource exhaustion.
+
+      Add explicit depth parameter and limit check:
+      ```python
+      def func(data, depth=0, max_depth=50):
+          if depth > max_depth:
+              raise RecursionLimitError("Max depth exceeded")
+          # ... logic ...
+          return func(result, depth + 1, max_depth)
+      ```
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: SA
+      hai-threat: RA
+      cwe: "CWE-674"
+      confidence: MEDIUM
+    severity: WARNING
+    languages: [python]
+
+  # ===========================================================================
+  # MONITORING & LOGGING (ML) - Missing Audit Trail
+  # ===========================================================================
+
+  - id: hai-ml-tool-call-no-logging
+    patterns:
+      - pattern: |
+          def $TOOL_FUNC(...):
+              ...
+              return $RESULT
+      - metavariable-regex:
+          metavariable: $TOOL_FUNC
+          regex: (execute_tool|call_tool|run_tool|tool_)
+      - pattern-not-inside: |
+          def $TOOL_FUNC(...):
+              ...
+              $LOGGER.info(...)
+              ...
+              return $RESULT
+      - pattern-not-inside: |
+          def $TOOL_FUNC(...):
+              ...
+              log(...)
+              ...
+              return $RESULT
+    message: |
+      Tool function without logging detected.
+
+      Risk: Missing audit trail for tool invocations.
+
+      All tool executions MUST be logged for:
+      1. Security audit
+      2. Incident investigation
+      3. Anomaly detection
+
+      HAIAMM Practice: ML (Monitoring & Logging)
+    metadata:
+      category: security
+      technology: [python]
+      haiamm-practice: ML
+      cwe: "CWE-778"
+      confidence: LOW
+    severity: INFO
+    languages: [python]
