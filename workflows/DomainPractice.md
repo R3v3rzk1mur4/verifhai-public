@@ -8,11 +8,13 @@ User says: "/verifhai practice [id] [domain]", "work on TA for Data domain", "bu
 
 ## HAIAMM Context Loading
 
-This workflow dynamically loads domain-specific guidance:
+This workflow dynamically loads domain-specific guidance.
+
+> **Note:** Set `HAIAMM_PATH` to your local HAIAMM repository path (e.g., `~/projects/HAIAMM`).
 
 ### One-Pager Path
 ```
-/Users/kuaihinojosa/projects/HAIAMM/docs/practices/{PRACTICE}-{DOMAIN}-OnePager.md
+${HAIAMM_PATH}/docs/practices/{PRACTICE}-{DOMAIN}-OnePager.md
 ```
 
 Where:
@@ -21,7 +23,7 @@ Where:
 
 ### Questionnaire Path (if exists)
 ```
-/Users/kuaihinojosa/projects/HAIAMM/docs/questionnaires/{PRACTICE}-{DOMAIN}-Questionnaire.md
+${HAIAMM_PATH}/docs/questionnaires/{PRACTICE}-{DOMAIN}-Questionnaire.md
 ```
 
 Available questionnaires:
@@ -43,7 +45,7 @@ Extract practice and domain from user request:
 
 Read the relevant one-pager file:
 ```
-/Users/kuaihinojosa/projects/HAIAMM/docs/practices/{PRACTICE}-{Domain}-OnePager.md
+${HAIAMM_PATH}/docs/practices/{PRACTICE}-{Domain}-OnePager.md
 ```
 
 Extract from the one-pager:

@@ -8,15 +8,17 @@ User says: "/verifhai measure", "full assessment", "measure maturity", "comprehe
 
 ## HAIAMM Context
 
+> **Note:** Set `HAIAMM_PATH` to your local HAIAMM repository path (e.g., `~/projects/HAIAMM`).
+
 ### Handbook Reference
 ```
-/Users/kuaihinojosa/projects/HAIAMM/docs/HAIAMM-Handbook.md
+${HAIAMM_PATH}/docs/HAIAMM-Handbook.md
 ```
 
 ### Questionnaire Sources
 Load questions from official questionnaires:
 ```
-/Users/kuaihinojosa/projects/HAIAMM/docs/questionnaires/{PRACTICE}-{DOMAIN}-Questionnaire.md
+${HAIAMM_PATH}/docs/questionnaires/{PRACTICE}-{DOMAIN}-Questionnaire.md
 ```
 
 **Available questionnaires:**
@@ -25,7 +27,7 @@ Load questions from official questionnaires:
 
 For missing practice-domain combinations, extract questions from one-pagers:
 ```
-/Users/kuaihinojosa/projects/HAIAMM/docs/practices/{PRACTICE}-{DOMAIN}-OnePager.md
+${HAIAMM_PATH}/docs/practices/{PRACTICE}-{DOMAIN}-OnePager.md
 ```
 
 ### Scoring Methodology (HAIAMM v2.0)

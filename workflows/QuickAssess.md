@@ -11,8 +11,10 @@ User says: "/verifhai assess", "how secure is my AI", "quick security check", "a
 ### Questionnaire Sources
 Load questions from official questionnaires when available:
 ```
-/Users/kuaihinojosa/projects/HAIAMM/docs/questionnaires/{PRACTICE}-Software-Questionnaire.md
+${HAIAMM_PATH}/docs/questionnaires/{PRACTICE}-Software-Questionnaire.md
 ```
+
+> **Note:** Set `HAIAMM_PATH` to your local HAIAMM repository path.
 
 Available questionnaires for Software domain: SM, PC, EG, TA, SR, SA, DR, IR, ST, EH, IM, ML (all 12)
 

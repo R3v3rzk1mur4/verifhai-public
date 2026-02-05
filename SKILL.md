@@ -187,13 +187,15 @@ Verifhai (Claude Skill) and the Python desktop tool work together:
 ## Data Locations
 
 ### HAIAMM Framework
-- **Handbook:** `/Users/kuaihinojosa/projects/HAIAMM/docs/HAIAMM-Handbook.md`
-- **One-Pagers (72):** `/Users/kuaihinojosa/projects/HAIAMM/docs/practices/{PRACTICE}-{DOMAIN}-OnePager.md`
-- **Questionnaires (19):** `/Users/kuaihinojosa/projects/HAIAMM/docs/questionnaires/{PRACTICE}-{DOMAIN}-Questionnaire.md`
+Configure `HAIAMM_PATH` environment variable or clone HAIAMM repository locally.
+
+- **Handbook:** `${HAIAMM_PATH}/docs/HAIAMM-Handbook.md`
+- **One-Pagers (72):** `${HAIAMM_PATH}/docs/practices/{PRACTICE}-{DOMAIN}-OnePager.md`
+- **Questionnaires (19):** `${HAIAMM_PATH}/docs/questionnaires/{PRACTICE}-{DOMAIN}-Questionnaire.md`
 
 ### Verifhai State
-- **Progress Schema:** `~/.claude/skills/Verifhai/state/progress.schema.json`
+- **Progress Schema:** `state/progress.schema.json` (in this repo)
 - **User Progress:** `.verifhai/progress.json` (in user's project)
 
 ### Python Tool (Optional)
-- **HAIAMM Model:** `~/projects/verifhai/config/haiamm_multi_domain_data_v2.2.json`
+- **HAIAMM Model:** `${HAIAMM_PATH}/config/haiamm_multi_domain_data_v2.json`

@@ -9,10 +9,12 @@ User says: "/verifhai practice [id]", "work on security requirements", "build th
 ## HAIAMM Context Loading
 
 When working on a specific practice, load context from:
-1. **One-Pager:** `/Users/kuaihinojosa/projects/HAIAMM/docs/practices/{PRACTICE}-Software-OnePager.md`
-2. **Questionnaire (if exists):** `/Users/kuaihinojosa/projects/HAIAMM/docs/questionnaires/{PRACTICE}-Software-Questionnaire.md`
+1. **One-Pager:** `${HAIAMM_PATH}/docs/practices/{PRACTICE}-Software-OnePager.md`
+2. **Questionnaire (if exists):** `${HAIAMM_PATH}/docs/questionnaires/{PRACTICE}-Software-Questionnaire.md`
 
 Use the one-pager to provide domain-specific activities and success criteria.
+
+> **Note:** Set `HAIAMM_PATH` to your local HAIAMM repository path (e.g., `~/projects/HAIAMM`).
 
 ## State Management
 
