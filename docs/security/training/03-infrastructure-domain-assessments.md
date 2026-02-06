@@ -23,8 +23,8 @@
 
 **Q1. What does CSPM stand for in cloud security?**
 
-- A) Cloud Security Policy Management
-- B) Cloud Security Posture Management ✓
+- A) Cloud Security Posture Management ✓
+- B) Cloud Security Policy Management
 - C) Cloud System Performance Monitoring
 - D) Centralized Security Platform Management
 
@@ -45,9 +45,9 @@
 
 **Q3. What is the primary limitation of AI infrastructure security tools that requires human oversight?**
 
-- A) AI tools are too slow
+- A) AI tools may lack business context and produce false positives ✓
 - B) AI tools are too expensive
-- C) AI tools may lack business context and produce false positives ✓
+- C) AI tools are too slow
 - D) AI tools don't work in the cloud
 
 **Explanation:** AI tools may not understand business context, leading to false positives or missing nuanced risks that humans can evaluate.
@@ -79,9 +79,9 @@
 **Q6. What is IaC security scanning?**
 
 - A) Scanning physical infrastructure
-- B) Analyzing Infrastructure-as-Code files for security issues before deployment ✓
+- B) Backing up infrastructure configurations
 - C) Scanning the internet for infrastructure
-- D) Backing up infrastructure configurations
+- D) Analyzing Infrastructure-as-Code files for security issues before deployment ✓
 
 **Explanation:** IaC security scanning (using tools like tfsec, Checkov) finds security issues in Terraform, CloudFormation, etc. before they're deployed.
 
@@ -89,9 +89,9 @@
 
 **Q7. Which human-AI collaboration level is appropriate for auto-remediating a non-encrypted S3 bucket in a non-production environment?**
 
-- A) Level 1 - AI assists only
-- B) Level 3 - AI automates low-risk scenarios ✓
-- C) Level 4 - Never automate
+- A) Level 3 - AI automates low-risk scenarios ✓
+- B) Level 1 - AI assists only
+- C) Level 4 - Require full manual investigation for all alerts
 - D) No AI involvement needed
 
 **Explanation:** Enabling encryption on a non-production S3 bucket is low-risk and easily reversible, making it suitable for automation.
@@ -123,9 +123,9 @@
 **Q10. What is a key security requirement for AI model files in cloud infrastructure?**
 
 - A) They should be publicly accessible for sharing
-- B) They should be encrypted at rest with access controls ✓
+- B) They don't need any special protection
 - C) They should be stored in temporary storage
-- D) They don't need any special protection
+- D) They should be encrypted at rest with access controls ✓
 
 **Explanation:** AI models are valuable assets requiring encryption at rest and strict access controls to prevent theft or tampering.
 
@@ -144,8 +144,8 @@
 
 **Q1. What is the purpose of "false positive suppression" in CSPM configuration?**
 
-- A) To hide all security findings
-- B) To document and exclude known non-issues with proper justification ✓
+- A) To document and exclude known non-issues with proper justification ✓
+- B) To hide all security findings
 - C) To make dashboards look better
 - D) To disable the CSPM tool
 
@@ -167,8 +167,8 @@
 **Q3. What is a "Tier 2" automation in the automation governance framework?**
 
 - A) No automation allowed
-- B) Auto-remediate with notification to team ✓
-- C) Human approval required
+- B) Human approval required
+- C) Auto-remediate with notification to team ✓
 - D) Emergency response only
 
 **Explanation:** Tier 2 allows auto-remediation of medium-risk issues with notification so teams are aware of automated changes.
@@ -177,8 +177,8 @@
 
 **Q4. What should an infrastructure security runbook include?**
 
-- A) Only the problem description
-- B) Trigger, investigation steps, remediation options, verification, and escalation paths ✓
+- A) Trigger, investigation steps, remediation options, verification, and escalation paths ✓
+- B) Only the problem description
 - C) Only contact information
 - D) Marketing materials
 
@@ -200,8 +200,8 @@
 **Q6. Which IaC security finding should block deployment?**
 
 - A) Missing optional tags
-- B) IAM policy with "Action": "*" allowing all actions ✓
-- C) Using a slightly outdated AMI
+- B) Using a slightly outdated AMI
+- C) IAM policy with "Action": "*" allowing all actions ✓
 - D) Resource naming convention issues
 
 **Explanation:** Overly permissive IAM policies are high-severity security issues that should block deployment.
@@ -211,9 +211,9 @@
 **Q7. What is the purpose of "policy-as-code" (e.g., OPA/Rego)?**
 
 - A) To write better documentation
-- B) To define and enforce security policies programmatically in CI/CD ✓
+- B) To create backups
 - C) To generate code automatically
-- D) To create backups
+- D) To define and enforce security policies programmatically in CI/CD ✓
 
 **Explanation:** Policy-as-code enables automated enforcement of security policies during the deployment pipeline.
 
@@ -221,9 +221,9 @@
 
 **Q8. When tuning CSPM to reduce alert fatigue, what is the WRONG approach?**
 
-- A) Suppress known false positives with documentation
+- A) Disable all alerts to reduce noise ✓
 - B) Prioritize by exploitability
-- C) Disable all alerts to reduce noise ✓
+- C) Suppress known false positives with documentation
 - D) Establish baselines and alert on deviations
 
 **Explanation:** Disabling all alerts eliminates visibility into real issues. Proper tuning maintains security while reducing noise.
@@ -244,8 +244,8 @@
 **Q10. In the cloud security reference architecture, what is the purpose of the API Gateway layer?**
 
 - A) To make the AI faster
-- B) To provide authentication, rate limiting, and request validation before traffic reaches AI services ✓
-- C) To store AI models
+- B) To store AI models
+- C) To provide authentication, rate limiting, and request validation before traffic reaches AI services ✓
 - D) To replace the AI system
 
 **Explanation:** API Gateway provides security controls (auth, rate limiting, validation) as a security perimeter for AI services.
@@ -259,9 +259,9 @@
 **Q11. What is the first step in responding to this alert?**
 
 - A) Immediately delete the instance
-- B) Validate the finding and assess if SSH access from anywhere is actually needed ✓
+- B) Add more open ports
 - C) Ignore it because production is important
-- D) Add more open ports
+- D) Validate the finding and assess if SSH access from anywhere is actually needed ✓
 
 **Explanation:** First validate the finding is accurate and assess if this exposure is intentional or a misconfiguration.
 
@@ -269,8 +269,8 @@
 
 **Q12. If the open SSH is confirmed as a misconfiguration, what is the appropriate remediation?**
 
-- A) Leave it open for convenience
-- B) Restrict the security group to allow SSH only from known management IPs or bastion hosts ✓
+- A) Restrict the security group to allow SSH only from known management IPs or bastion hosts ✓
+- B) Leave it open for convenience
 - C) Delete the entire security group
 - D) Open more ports to balance the risk
 
@@ -321,9 +321,9 @@ resource "aws_s3_bucket_public_access_block" "data" {
 **Q15. Why is this configuration a security concern?**
 
 - A) The bucket name is too long
-- B) All public access block settings are disabled, allowing the bucket to be made public ✓
+- B) Terraform is not secure
 - C) The bucket should use a different region
-- D) Terraform is not secure
+- D) All public access block settings are disabled, allowing the bucket to be made public ✓
 
 **Explanation:** All public access block settings are `false`, meaning the bucket can be configured for public access - a common data exposure risk.
 
@@ -342,8 +342,8 @@ resource "aws_s3_bucket_public_access_block" "data" {
 
 **Q1. What is the core principle of Zero Trust architecture for AI infrastructure?**
 
-- A) Trust everything inside the network
-- B) Never trust, always verify - authenticate and authorize every access ✓
+- A) Never trust, always verify - authenticate and authorize every access ✓
+- B) Trust everything inside the network
 - C) Trust all AI systems automatically
 - D) Disable all security to simplify operations
 
@@ -364,8 +364,8 @@ resource "aws_s3_bucket_public_access_block" "data" {
 
 **Q3. What is "confidential computing" for AI workloads?**
 
-- A) Keeping AI work secret from management
-- B) Using hardware-based security (TEEs) to protect data even while being processed ✓
+- A) Using hardware-based security (TEEs) to protect data even while being processed ✓
+- B) Keeping AI work secret from management
 - C) Encrypting AI marketing materials
 - D) Making AI work confidentially with customers
 
@@ -386,9 +386,9 @@ resource "aws_s3_bucket_public_access_block" "data" {
 
 **Q5. What is the target for "Critical Findings MTTR" in a mature infrastructure security program?**
 
-- A) Less than 24 hours ✓
+- A) Within 90 days
 - B) Within 30 days
-- C) Within 90 days
+- C) Less than 24 hours ✓
 - D) No target needed
 
 **Explanation:** Critical findings should be remediated within 24 hours due to high risk of exploitation.
@@ -400,9 +400,9 @@ resource "aws_s3_bucket_public_access_block" "data" {
 **Q6. Which architecture pattern is MOST appropriate for this scenario?**
 
 - A) Public cloud with default settings
-- B) Zero Trust architecture with confidential computing for sensitive processing ✓
+- B) Public endpoints for easy access
 - C) On-premises only with no cloud
-- D) Public endpoints for easy access
+- D) Zero Trust architecture with confidential computing for sensitive processing ✓
 
 **Explanation:** Sensitive financial data requires Zero Trust (verify every access) and potentially confidential computing for data-in-use protection.
 
@@ -410,8 +410,8 @@ resource "aws_s3_bucket_public_access_block" "data" {
 
 **Q7. What network control is essential for this sensitive AI system?**
 
-- A) Public IP for easy access
-- B) Private endpoints with API gateway, egress filtering, and east-west traffic inspection ✓
+- A) Private endpoints with API gateway, egress filtering, and east-west traffic inspection ✓
+- B) Public IP for easy access
 - C) Open security groups for flexibility
 - D) No network controls needed with encryption
 
@@ -435,8 +435,8 @@ resource "aws_s3_bucket_public_access_block" "data" {
 **Q9. What industry contribution demonstrates infrastructure security thought leadership?**
 
 - A) Keeping all security practices secret
-- B) Contributing to CIS Benchmarks, publishing secure architectures, speaking at conferences ✓
-- C) Using only proprietary tools
+- B) Using only proprietary tools
+- C) Contributing to CIS Benchmarks, publishing secure architectures, speaking at conferences ✓
 - D) Avoiding all industry collaboration
 
 **Explanation:** Thought leadership involves contributing to standards (CIS), sharing knowledge, and participating in industry forums.
@@ -446,9 +446,9 @@ resource "aws_s3_bucket_public_access_block" "data" {
 **Q10. What is the purpose of participating in cloud vendor security programs?**
 
 - A) To get free cloud credits
-- B) To provide feedback that improves native security features and learn best practices ✓
+- B) To avoid security responsibility
 - C) To complain about pricing
-- D) To avoid security responsibility
+- D) To provide feedback that improves native security features and learn best practices ✓
 
 **Explanation:** Engaging with cloud vendor security programs helps improve cloud security features and provides learning opportunities.
 
@@ -529,13 +529,13 @@ resource "aws_s3_bucket_public_access_block" "data" {
 ## Answer Key Summary
 
 ### L1 Answers
-1-B, 2-B, 3-C, 4-B, 5-C, 6-B, 7-B, 8-B, 9-C, 10-B
+1-A, 2-B, 3-A, 4-B, 5-C, 6-D, 7-A, 8-B, 9-C, 10-D
 
 ### L2 Answers
-1-B, 2-B, 3-B, 4-B, 5-B, 6-B, 7-B, 8-C, 9-B, 10-B, 11-B, 12-B, 13-B, 14-C, 15-B
+1-A, 2-B, 3-C, 4-A, 5-B, 6-C, 7-D, 8-A, 9-B, 10-C, 11-D, 12-A, 13-B, 14-C, 15-D
 
 ### L3 Answers
-1-B, 2-B, 3-B, 4-B, 5-A, 6-B, 7-B, 8-B, 9-B, 10-B
+1-A, 2-B, 3-A, 4-B, 5-C, 6-D, 7-A, 8-B, 9-C, 10-D
 Practical: Rubric-based evaluation
 
 ---

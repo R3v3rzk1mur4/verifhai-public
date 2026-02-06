@@ -16,8 +16,8 @@
 
 **Q1. What does SOAR stand for in security operations?**
 
-- A) Security Operations and Response
-- B) Security Orchestration, Automation, and Response ✓
+- A) Security Orchestration, Automation, and Response ✓
+- B) Security Operations and Response
 - C) System Optimization and Recovery
 - D) Secure Operations Architecture Review
 
@@ -38,8 +38,8 @@
 
 **Q3. In AI-assisted incident triage, what is the AI's primary role?**
 
-- A) Replace all human analysts
-- B) Pre-score, enrich, and prioritize alerts for human review ✓
+- A) Pre-score, enrich, and prioritize alerts for human review ✓
+- B) Replace all human analysts
 - C) Make all final decisions
 - D) Only generate reports
 
@@ -61,8 +61,8 @@
 **Q5. What is the purpose of quality sampling AI-closed incidents?**
 
 - A) To slow down the AI
-- B) To verify AI made correct decisions and identify improvement areas ✓
-- C) To create more work for analysts
+- B) To create more work for analysts
+- C) To verify AI made correct decisions and identify improvement areas ✓
 - D) To comply with AI regulations only
 
 **Explanation:** Quality sampling catches AI errors, identifies patterns for improvement, and maintains accountability.
@@ -72,9 +72,9 @@
 **Q6. Which security process is a good candidate for AI automation?**
 
 - A) Executive communication during breaches
-- B) Routine alert triage and enrichment ✓
+- B) Board reporting
 - C) Policy exception approvals
-- D) Board reporting
+- D) Routine alert triage and enrichment ✓
 
 **Explanation:** Routine, repeatable tasks like alert triage are ideal for AI automation; judgment-heavy tasks need humans.
 
@@ -82,8 +82,8 @@
 
 **Q7. What is a SOAR playbook?**
 
-- A) A sports play diagram
-- B) An automated workflow that executes security response steps ✓
+- A) An automated workflow that executes security response steps ✓
+- B) A sports play diagram
 - C) A compliance document
 - D) A user manual
 
@@ -105,8 +105,8 @@
 **Q9. What is a key benefit of AI process automation in security operations?**
 
 - A) Eliminates all security risks
-- B) Provides consistent, 24/7 execution of routine tasks ✓
-- C) Makes human analysts unnecessary
+- B) Makes human analysts unnecessary
+- C) Provides consistent, 24/7 execution of routine tasks ✓
 - D) Guarantees 100% accuracy
 
 **Explanation:** AI provides consistent execution around the clock, saving analyst time for complex work.
@@ -116,9 +116,9 @@
 **Q10. What should happen when an AI-automated process encounters an error?**
 
 - A) Ignore it and continue
-- B) Log the error, notify appropriate team, and fall back to manual process ✓
+- B) Restart the entire system
 - C) Delete the incident
-- D) Restart the entire system
+- D) Log the error, notify appropriate team, and fall back to manual process ✓
 
 **Explanation:** Errors should be logged, notifications sent, and manual fallback processes activated to maintain operations.
 
@@ -130,8 +130,8 @@
 
 **Q1. What is the recommended quality sampling rate for AI-closed incidents?**
 
-- A) 100% - review every incident
-- B) 5-10% sample for accuracy validation ✓
+- A) 5-10% sample for accuracy validation ✓
+- B) 100% - review every incident
 - C) 0% - trust the AI completely
 - D) Only review when customers complain
 
@@ -153,8 +153,8 @@
 **Q3. How does AI process automation integrate with ITIL Incident Management?**
 
 - A) AI replaces ITIL
-- B) AI actions are logged in incident tickets, following ITIL escalation matrix ✓
-- C) ITIL doesn't apply to AI
+- B) ITIL doesn't apply to AI
+- C) AI actions are logged in incident tickets, following ITIL escalation matrix ✓
 - D) AI ignores ITIL processes
 
 **Explanation:** AI automation should integrate with ITIL, logging actions in tickets and following established escalation paths.
@@ -165,8 +165,8 @@
 
 - A) 50%
 - B) 75%
-- C) >95% ✓
-- D) 100% always
+- C) 100% always
+- D) >95% ✓
 
 **Explanation:** High-performing AI classification should achieve >95% accuracy; below this, too many errors reach production.
 
@@ -174,8 +174,8 @@
 
 **Q5. What is "process conformance" in AI workflow monitoring?**
 
-- A) How fast the process runs
-- B) How closely actual execution matches the designed process ✓
+- A) How closely actual execution matches the designed process ✓
+- B) How fast the process runs
 - C) How much the process costs
 - D) How many people like the process
 
@@ -199,8 +199,8 @@
 **Q7. What action should be taken for Scenario A?**
 
 - A) Increase auto-close rate to 80%
-- B) Tighten auto-close criteria, retrain AI model, increase quality sampling ✓
-- C) Disable all automation
+- B) Disable all automation
+- C) Tighten auto-close criteria, retrain AI model, increase quality sampling ✓
 - D) Ignore the quality review
 
 **Explanation:** Tighten criteria to reduce false negatives, retrain the model, and increase sampling to catch issues earlier.
@@ -212,9 +212,9 @@
 **Q8. What is the operational impact of this issue?**
 
 - A) No impact
-- B) Increased analyst workload, slower MTTR, potential for missed context ✓
+- B) Reduced costs
 - C) Better security
-- D) Reduced costs
+- D) Increased analyst workload, slower MTTR, potential for missed context ✓
 
 **Explanation:** Timeout-driven fallback increases manual work, slows response, and may mean analysts lack enrichment context.
 
@@ -222,8 +222,8 @@
 
 **Q9. How should timeout issues in AI playbooks be addressed?**
 
-- A) Remove the enrichment step
-- B) Increase timeout, optimize integration, add caching, consider async enrichment ✓
+- A) Increase timeout, optimize integration, add caching, consider async enrichment ✓
+- B) Remove the enrichment step
 - C) Accept the current state
 - D) Replace all AI with manual processes
 
@@ -245,8 +245,8 @@
 **Q11. What metric best measures the business impact of AI process automation?**
 
 - A) Number of playbooks created
-- B) MTTR reduction and analyst time saved ✓
-- C) Lines of automation code
+- B) Lines of automation code
+- C) MTTR reduction and analyst time saved ✓
 - D) Number of AI models deployed
 
 **Explanation:** Business impact is measured by outcomes: faster response (MTTR) and efficiency gains (analyst time saved).
@@ -256,9 +256,9 @@
 **Q12. What is process mining used for in AI workflow optimization?**
 
 - A) Mining cryptocurrency
-- B) Analyzing actual process execution to identify inefficiencies and improvement opportunities ✓
+- B) Deleting old processes
 - C) Creating new processes from scratch
-- D) Deleting old processes
+- D) Analyzing actual process execution to identify inefficiencies and improvement opportunities ✓
 
 **Explanation:** Process mining analyzes how processes actually execute (vs. how designed) to find bottlenecks and improvements.
 
@@ -270,8 +270,8 @@
 
 **Q1. What is the typical target for security automation ROI?**
 
-- A) 50% ROI
-- B) 100-400%+ ROI through analyst time savings, MTTR reduction, and avoided hires ✓
+- A) 100-400%+ ROI through analyst time savings, MTTR reduction, and avoided hires ✓
+- B) 50% ROI
 - C) 10% ROI
 - D) ROI doesn't matter for security
 
@@ -293,8 +293,8 @@
 **Q3. How should process excellence teams handle AI model updates?**
 
 - A) Deploy immediately without testing
-- B) Test in staging, validate accuracy, deploy with rollback plan through change management ✓
-- C) Never update models
+- B) Never update models
+- C) Test in staging, validate accuracy, deploy with rollback plan through change management ✓
 - D) Only update annually
 
 **Explanation:** Model updates should follow proper testing, validation, and change management to prevent production issues.
@@ -306,9 +306,9 @@
 **Q4. What is the annual analyst time savings value?**
 
 - A) $75,000
-- B) $375,000 (10,000 × 0.5 × $75) ✓
+- B) $200,000
 - C) $750,000
-- D) $200,000
+- D) $375,000 (10,000 × 0.5 × $75) ✓
 
 **Explanation:** 10,000 incidents × 0.5 hours × $75/hour = $375,000 in analyst time savings.
 
@@ -339,8 +339,8 @@
 **Q7. What is the purpose of a Process Excellence community of practice?**
 
 - A) Social networking
-- B) Cross-functional collaboration to continuously improve AI-automated processes ✓
-- C) Reducing security staff
+- B) Reducing security staff
+- C) Cross-functional collaboration to continuously improve AI-automated processes ✓
 - D) Replacing management
 
 **Explanation:** Communities of practice bring together diverse expertise to improve automation quality and effectiveness.
@@ -350,9 +350,9 @@
 **Q8. How should organizations handle AI process failures during critical incidents?**
 
 - A) Wait for AI to recover
-- B) Have documented manual fallback procedures that can be executed immediately ✓
+- B) Blame the AI vendor
 - C) Ignore the incident
-- D) Blame the AI vendor
+- D) Have documented manual fallback procedures that can be executed immediately ✓
 
 **Explanation:** Manual fallback procedures ensure operations continue even when AI automation fails.
 
@@ -390,13 +390,13 @@
 ## Answer Key Summary
 
 ### L1 Answers
-1-B, 2-B, 3-B, 4-B, 5-B, 6-B, 7-B, 8-B, 9-B, 10-B
+1-A, 2-B, 3-A, 4-B, 5-C, 6-D, 7-A, 8-B, 9-C, 10-D
 
 ### L2 Answers
-1-B, 2-B, 3-B, 4-C, 5-B, 6-B, 7-B, 8-B, 9-B, 10-B, 11-B, 12-B
+1-A, 2-B, 3-C, 4-D, 5-A, 6-B, 7-C, 8-D, 9-A, 10-B, 11-C, 12-D
 
 ### L3 Answers
-1-B, 2-B, 3-B, 4-B, 5-A, 6-B, 7-B, 8-B
+1-A, 2-B, 3-C, 4-D, 5-A, 6-B, 7-C, 8-D
 Practical: Rubric-based evaluation
 
 ---

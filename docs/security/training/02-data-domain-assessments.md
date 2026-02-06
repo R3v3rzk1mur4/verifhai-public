@@ -23,9 +23,9 @@
 
 **Q1. Under GDPR, what is the maximum time allowed to respond to a Data Subject Access Request (DSAR)?**
 
-- A) 72 hours
+- A) 30 days (extendable to 90 in complex cases) ✓
 - B) 7 days
-- C) 30 days (extendable to 90 in complex cases) ✓
+- C) 72 hours
 - D) 90 days
 
 **Explanation:** GDPR Article 12 requires response within one month (30 days), extendable by two additional months for complex requests.
@@ -46,8 +46,8 @@
 **Q3. What type of data is "Protected Health Information (PHI)"?**
 
 - A) Any information about health
-- B) Health information that can identify an individual, protected under HIPAA ✓
-- C) Public health statistics
+- B) Public health statistics
+- C) Health information that can identify an individual, protected under HIPAA ✓
 - D) Information about healthy foods
 
 **Explanation:** PHI under HIPAA includes individually identifiable health information held by covered entities.
@@ -57,9 +57,9 @@
 **Q4. Which AI-specific data risk involves the AI revealing personal data it learned during training?**
 
 - A) Over-collection
-- B) Training data extraction ✓
+- B) Cross-context use
 - C) Unauthorized profiling
-- D) Cross-context use
+- D) Training data extraction ✓
 
 **Explanation:** Training data extraction occurs when AI can be prompted to reveal memorized personal data from its training set.
 
@@ -67,8 +67,8 @@
 
 **Q5. Under GDPR Article 22, what right do data subjects have regarding automated decision-making?**
 
-- A) The right to free AI services
-- B) The right not to be subject to solely automated decisions that significantly affect them, and to request human review ✓
+- A) The right not to be subject to solely automated decisions that significantly affect them, and to request human review ✓
+- B) The right to free AI services
 - C) The right to have AI make all decisions
 - D) No specific rights
 
@@ -79,9 +79,9 @@
 **Q6. What classification level would typically apply to Social Security Numbers?**
 
 - A) Public
-- B) Internal
+- B) Restricted ✓
 - C) Confidential
-- D) Restricted ✓
+- D) Internal
 
 **Explanation:** SSNs are sensitive PII requiring the highest protection level (Restricted) due to identity theft risk.
 
@@ -101,9 +101,9 @@
 **Q8. What is the GDPR breach notification deadline to supervisory authorities?**
 
 - A) 24 hours
-- B) 72 hours ✓
+- B) 30 days
 - C) 7 days
-- D) 30 days
+- D) 72 hours ✓
 
 **Explanation:** GDPR Article 33 requires notification to the supervisory authority within 72 hours of becoming aware of a breach.
 
@@ -111,8 +111,8 @@
 
 **Q9. When an AI chatbot asks a customer for their full medical history to answer a simple product question, this violates which privacy principle?**
 
-- A) Accuracy
-- B) Data Minimization ✓
+- A) Data Minimization ✓
+- B) Accuracy
 - C) Storage Limitation
 - D) Integrity
 
@@ -146,8 +146,8 @@
 
 - A) Email address
 - B) Phone number
-- C) Health data ✓
-- D) Job title
+- C) Job title
+- D) Health data ✓
 
 **Explanation:** GDPR Article 9 identifies special categories including health data, biometrics, race, religion, and sexual orientation.
 
@@ -166,8 +166,8 @@
 
 **Q1. When is a Data Protection Impact Assessment (DPIA) required under GDPR?**
 
-- A) For all data processing
-- B) When processing is likely to result in high risk to individuals, including systematic profiling and new technologies like AI ✓
+- A) When processing is likely to result in high risk to individuals, including systematic profiling and new technologies like AI ✓
+- B) For all data processing
 - C) Only for marketing activities
 - D) Only when requested by regulators
 
@@ -189,8 +189,8 @@
 **Q3. When handling a DSAR for data processed by an AI system, what MUST be included in the response?**
 
 - A) Only database records
-- B) Database records, AI conversation logs, AI-generated profiles/inferences, and meaningful information about AI logic ✓
-- C) Only the user's name
+- B) Only the user's name
+- C) Database records, AI conversation logs, AI-generated profiles/inferences, and meaningful information about AI logic ✓
 - D) A link to the privacy policy
 
 **Explanation:** DSAR responses must include all personal data, including AI-processed data, inferences, and explanation of automated decision-making logic.
@@ -199,8 +199,8 @@
 
 **Q4. What is the primary purpose of data classification in AI systems?**
 
-- A) To make data easier to search
-- B) To identify data sensitivity and apply appropriate protection controls ✓
+- A) To identify data sensitivity and apply appropriate protection controls ✓
+- B) To make data easier to search
 - C) To reduce storage costs
 - D) To improve AI accuracy
 
@@ -222,8 +222,8 @@
 **Q6. What does "Privacy by Design" mean for AI systems?**
 
 - A) Design a privacy-focused user interface
-- B) Build privacy protections into AI systems from the design phase, not as an afterthought ✓
-- C) Only process public data
+- B) Only process public data
+- C) Build privacy protections into AI systems from the design phase, not as an afterthought ✓
 - D) Get privacy certification
 
 **Explanation:** Privacy by Design means integrating privacy considerations into system architecture from the beginning.
@@ -234,8 +234,8 @@
 
 - A) Disable DLP entirely
 - B) Ignore all findings
-- C) Tune detection rules, start in monitoring mode, and gradually refine based on review ✓
-- D) Accept all data may be blocked
+- C) Accept all data may be blocked
+- D) Tune detection rules, start in monitoring mode, and gradually refine based on review ✓
 
 **Explanation:** DLP should be tuned incrementally, starting in monitoring mode to understand false positive patterns before blocking.
 
@@ -243,8 +243,8 @@
 
 **Q8. What is the purpose of pseudonymization in AI data processing?**
 
-- A) Delete personal data
-- B) Replace identifying information with pseudonyms while retaining data utility, reducing risk ✓
+- A) Replace identifying information with pseudonyms while retaining data utility, reducing risk ✓
+- B) Delete personal data
 - C) Encrypt data completely
 - D) Make data public
 
@@ -266,8 +266,8 @@
 **Q10. What is "data minimization" in the context of AI prompts?**
 
 - A) Using shorter prompts
-- B) Only including personal data in prompts that is necessary for the AI task ✓
-- C) Minimizing AI response length
+- B) Minimizing AI response length
+- C) Only including personal data in prompts that is necessary for the AI task ✓
 - D) Using less training data
 
 **Explanation:** Data minimization for AI prompts means not including unnecessary PII - only what the AI needs to perform the specific task.
@@ -285,9 +285,9 @@
 **Q11. What MUST be included in the DSAR response for Scenario A?**
 
 - A) Only the conversation history
-- B) Conversation history, AI sentiment scores, churn predictions, and credit card number (with explanation of why CC was stored) ✓
+- B) Nothing - chatbot data is exempt
 - C) Only the credit card number
-- D) Nothing - chatbot data is exempt
+- D) Conversation history, AI sentiment scores, churn predictions, and credit card number (with explanation of why CC was stored) ✓
 
 **Explanation:** All personal data must be provided, including AI-generated inferences about the individual. The unexpected CC storage should be addressed.
 
@@ -295,8 +295,8 @@
 
 **Q12. What immediate action should be taken regarding the credit card storage in Scenario A?**
 
-- A) Delete it without telling anyone
-- B) Investigate how it was captured, assess if it's a breach, implement controls to prevent future capture ✓
+- A) Investigate how it was captured, assess if it's a breach, implement controls to prevent future capture ✓
+- B) Delete it without telling anyone
 - C) Continue storing it
 - D) Add it to the customer profile
 
@@ -320,8 +320,8 @@
 **Q14. If the vendor's use of data for training is NOT permitted under your agreement, what should you do?**
 
 - A) Ignore it
-- B) Formally object and require opt-out, or consider terminating the relationship if not addressed ✓
-- C) Just accept it
+- B) Just accept it
+- C) Formally object and require opt-out, or consider terminating the relationship if not addressed ✓
 - D) Report to police
 
 **Explanation:** Exercise your contractual rights to object and require data not be used for training, or evaluate alternative vendors.
@@ -333,9 +333,9 @@
 **Q15. What is the PRIMARY privacy concern for the system in Scenario C?**
 
 - A) The AI might not be accurate
-- B) Systematic monitoring of employees creates significant privacy risks requiring strong justification and safeguards ✓
+- B) Employees might not like it
 - C) The AI might be expensive
-- D) Employees might not like it
+- D) Systematic monitoring of employees creates significant privacy risks requiring strong justification and safeguards ✓
 
 **Explanation:** Employee monitoring AI involves systematic surveillance with significant privacy implications, requiring careful balancing of legitimate interests against employee rights.
 
@@ -354,8 +354,8 @@
 
 **Q1. What is "differential privacy" in the context of AI?**
 
-- A) Different privacy policies for different users
-- B) A mathematical technique that adds calibrated noise to data/outputs to protect individual privacy while maintaining aggregate utility ✓
+- A) A mathematical technique that adds calibrated noise to data/outputs to protect individual privacy while maintaining aggregate utility ✓
+- B) Different privacy policies for different users
 - C) Privacy that varies over time
 - D) Privacy only for differential equations
 
@@ -376,8 +376,8 @@
 
 **Q3. What is the "epsilon" parameter in differential privacy?**
 
-- A) The encryption key
-- B) The privacy budget - lower values mean more privacy but more noise ✓
+- A) The privacy budget - lower values mean more privacy but more noise ✓
+- B) The encryption key
 - C) The data size
 - D) The model accuracy
 
@@ -399,8 +399,8 @@
 **Q5. What metric measures how quickly your organization responds to Data Subject Access Requests?**
 
 - A) Privacy Incident Rate
-- B) DSAR Response Time ✓
-- C) Consent Rate
+- B) Consent Rate
+- C) DSAR Response Time ✓
 - D) DPIA Completion Rate
 
 **Explanation:** DSAR Response Time tracks average time to fulfill data subject requests (target: faster than regulatory deadlines).
@@ -412,9 +412,9 @@
 **Q6. What privacy-enhancing technology would allow training while minimizing individual privacy risk?**
 
 - A) Stronger passwords
-- B) Differential privacy or federated learning to train without exposing individual records ✓
+- B) Longer retention periods
 - C) Better firewalls
-- D) Longer retention periods
+- D) Differential privacy or federated learning to train without exposing individual records ✓
 
 **Explanation:** Differential privacy adds noise during training to prevent memorization of individual records; federated learning keeps data distributed.
 
@@ -422,8 +422,8 @@
 
 **Q7. What must the DPIA for Scenario D's AI system specifically address?**
 
-- A) Only technical security
-- B) Necessity and proportionality, lawful basis, profiling implications, data subject rights, and safeguards ✓
+- A) Necessity and proportionality, lawful basis, profiling implications, data subject rights, and safeguards ✓
+- B) Only technical security
 - C) Only cost estimates
 - D) Only accuracy metrics
 
@@ -436,8 +436,8 @@
 **Q8. Which metric indicates the biggest opportunity for improvement in Scenario E?**
 
 - A) DSAR Response Time (18 days is good)
-- B) DPIA Coverage (100% is excellent)
-- C) PET Adoption at 45% - privacy-enhancing technologies should be more widely used ✓
+- B) PET Adoption at 45% - privacy-enhancing technologies should be more widely used ✓
+- C) DPIA Coverage (100% is excellent)
 - D) Privacy Incidents (3 is acceptable)
 
 **Explanation:** PET adoption at 45% suggests many AI systems aren't using privacy-enhancing technologies that could further reduce risk.
@@ -447,8 +447,8 @@
 **Q9. What industry contribution demonstrates privacy thought leadership?**
 
 - A) Keeping all privacy practices secret
-- B) Publishing privacy implementation case studies, contributing to standards, speaking at privacy conferences ✓
-- C) Having the largest privacy budget
+- B) Having the largest privacy budget
+- C) Publishing privacy implementation case studies, contributing to standards, speaking at privacy conferences ✓
 - D) Processing the most personal data
 
 **Explanation:** Thought leadership involves sharing knowledge through publications, standards development, and industry events.
@@ -458,9 +458,9 @@
 **Q10. What is the purpose of "synthetic data" in privacy-preserving AI?**
 
 - A) Data that is fake and useless
-- B) AI-generated data with same statistical properties as real data, allowing AI development without real personal data ✓
+- B) Compressed data
 - C) Data stored in synthetic materials
-- D) Compressed data
+- D) AI-generated data with same statistical properties as real data, allowing AI development without real personal data ✓
 
 **Explanation:** Synthetic data maintains statistical utility for AI training/testing while not containing actual personal information.
 
@@ -540,13 +540,13 @@
 ## Answer Key Summary
 
 ### L1 Answers
-1-C, 2-B, 3-B, 4-B, 5-B, 6-D, 7-C, 8-B, 9-B, 10-B, 11-C, 12-C
+1-A, 2-B, 3-C, 4-D, 5-A, 6-B, 7-C, 8-D, 9-A, 10-B, 11-C, 12-D
 
 ### L2 Answers
-1-B, 2-B, 3-B, 4-B, 5-B, 6-B, 7-C, 8-B, 9-B, 10-B, 11-B, 12-B, 13-B, 14-B, 15-B
+1-A, 2-B, 3-C, 4-A, 5-B, 6-C, 7-D, 8-A, 9-B, 10-C, 11-D, 12-A, 13-B, 14-C, 15-D
 
 ### L3 Answers
-1-B, 2-B, 3-B, 4-B, 5-B, 6-B, 7-B, 8-C, 9-B, 10-B
+1-A, 2-B, 3-A, 4-B, 5-C, 6-D, 7-A, 8-B, 9-C, 10-D
 Practical: Rubric-based evaluation
 
 ---

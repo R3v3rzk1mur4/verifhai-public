@@ -23,8 +23,8 @@
 
 **Q1. Why is vendor security particularly important for HAI (Human-Assisted Intelligence) systems?**
 
-- A) HAI systems don't use vendors
-- B) HAI systems often rely on multiple external services (AI APIs, cloud, dependencies) that extend the attack surface ✓
+- A) HAI systems often rely on multiple external services (AI APIs, cloud, dependencies) that extend the attack surface ✓
+- B) HAI systems don't use vendors
 - C) Vendors are always more secure than internal systems
 - D) HAI systems are immune to vendor security issues
 
@@ -45,8 +45,8 @@
 
 **Q3. What does SBOM stand for?**
 
-- A) Security Bill of Materials
-- B) Software Bill of Materials ✓
+- A) Software Bill of Materials ✓
+- B) Security Bill of Materials
 - C) System Baseline Operations Manual
 - D) Supply Base Ordering Module
 
@@ -68,8 +68,8 @@
 **Q5. What is the primary difference between a SOC 2 Type I and Type II report?**
 
 - A) Type I is more secure
-- B) Type II covers a period of time and tests control effectiveness, Type I is point-in-time ✓
-- C) Type I is newer than Type II
+- B) Type I is newer than Type II
+- C) Type II covers a period of time and tests control effectiveness, Type I is point-in-time ✓
 - D) There is no difference
 
 **Explanation:** Type I describes controls at a point in time; Type II evaluates control effectiveness over a period (typically 6-12 months), making Type II more valuable.
@@ -79,9 +79,9 @@
 **Q6. For AI vendors specifically, which of the following should be assessed?**
 
 - A) Only their physical security
-- B) How they handle prompts/responses and whether customer data is used for training ✓
+- B) AI vendors don't need security assessment
 - C) Only their pricing model
-- D) AI vendors don't need security assessment
+- D) How they handle prompts/responses and whether customer data is used for training ✓
 
 **Explanation:** AI vendors require specific assessment of how they handle customer prompts, responses, and whether data is used for model training.
 
@@ -89,8 +89,8 @@
 
 **Q7. What is SCA in the context of supply chain security?**
 
-- A) Security Compliance Audit
-- B) Software Composition Analysis ✓
+- A) Software Composition Analysis ✓
+- B) Security Compliance Audit
 - C) Supply Chain Assessment
 - D) System Configuration Analysis
 
@@ -123,9 +123,9 @@
 **Q10. What should you do if a vendor claims "we follow industry best practices" on a security questionnaire?**
 
 - A) Accept it as sufficient evidence
-- B) Request specific controls and evidence to verify the claim ✓
+- B) Skip that question
 - C) Automatically reject the vendor
-- D) Skip that question
+- D) Request specific controls and evidence to verify the claim ✓
 
 **Explanation:** Vague claims require follow-up to understand exactly what controls are implemented and request evidence.
 
@@ -144,8 +144,8 @@
 
 **Q1. What are "Complementary User Entity Controls" (CUECs) in a SOC 2 report?**
 
-- A) Controls the auditor recommends
-- B) Controls the customer organization must implement for the overall control environment to be effective ✓
+- A) Controls the customer organization must implement for the overall control environment to be effective ✓
+- B) Controls the auditor recommends
 - C) Additional controls the vendor charges extra for
 - D) Controls that are optional
 
@@ -167,8 +167,8 @@
 **Q3. What is "dependency confusion" attack?**
 
 - A) Developers using too many dependencies
-- B) Attacker publishes public package with same name as internal private package ✓
-- C) Dependencies having conflicting versions
+- B) Dependencies having conflicting versions
+- C) Attacker publishes public package with same name as internal private package ✓
 - D) Forgetting which dependencies are used
 
 **Explanation:** Dependency confusion exploits package managers that may prefer public packages, allowing attackers to hijack internal package names.
@@ -200,8 +200,8 @@
 **Q6. When prioritizing vulnerability remediation in dependencies, which factor is MOST important?**
 
 - A) Package size
-- B) Exploitability and severity (CVSS score, known exploits, exposure) ✓
-- C) When the package was last updated
+- B) When the package was last updated
+- C) Exploitability and severity (CVSS score, known exploits, exposure) ✓
 - D) Number of GitHub stars
 
 **Explanation:** Prioritize based on actual risk: severity, whether exploits exist, and whether the vulnerable code path is reachable in your application.
@@ -212,8 +212,8 @@
 
 - A) Full security questionnaire
 - B) Contract review
-- C) Security rating services and breach monitoring ✓
-- D) Onsite assessments
+- C) Onsite assessments
+- D) Security rating services and breach monitoring ✓
 
 **Explanation:** Continuous monitoring (security ratings, breach news, dark web) provides real-time awareness between periodic assessments.
 
@@ -221,8 +221,8 @@
 
 **Q8. What contract clause protects you from vendor's vendors (fourth parties)?**
 
-- A) Indemnification clause
-- B) Subprocessor notification and approval rights ✓
+- A) Subprocessor notification and approval rights ✓
+- B) Indemnification clause
 - C) Pricing clause
 - D) Termination clause
 
@@ -233,8 +233,8 @@
 **Q9. When analyzing a vendor's security questionnaire responses with AI assistance, what should you NOT do?**
 
 - A) Use AI to identify potential red flags
-- B) Have AI pre-score responses
-- C) Blindly accept AI risk scores without human review ✓
+- B) Blindly accept AI risk scores without human review ✓
+- C) Have AI pre-score responses
 - D) Use AI to suggest follow-up questions
 
 **Explanation:** AI assessments require human review, especially for critical vendors where context and business judgment matter.
@@ -244,8 +244,8 @@
 **Q10. What is the primary purpose of requiring audit rights in vendor contracts?**
 
 - A) To punish vendors
-- B) To verify vendor security practices and request evidence when needed ✓
-- C) To conduct audits every month
+- B) To conduct audits every month
+- C) To verify vendor security practices and request evidence when needed ✓
 - D) To reduce contract costs
 
 **Explanation:** Audit rights allow you to verify vendor claims, request evidence, and assess security posture beyond self-reported questionnaires.
@@ -262,9 +262,9 @@
 **Q11. How should you evaluate the access review exception in Scenario A?**
 
 - A) Reject the vendor immediately
-- B) Assess if the exception materially affects your risk, check management response, and determine if compensating controls exist ✓
+- B) Assume it's already been fixed
 - C) Ignore it because it's only one exception
-- D) Assume it's already been fixed
+- D) Assess if the exception materially affects your risk, check management response, and determine if compensating controls exist ✓
 
 **Explanation:** Evaluate the exception's materiality, how the vendor responded, and whether it's been remediated or compensating controls are in place.
 
@@ -272,8 +272,8 @@
 
 **Q12. What action must you take based on the CUEC in Scenario A?**
 
-- A) Nothing - it's the vendor's responsibility
-- B) Implement encryption for data sent to the AI provider as specified ✓
+- A) Implement encryption for data sent to the AI provider as specified ✓
+- B) Nothing - it's the vendor's responsibility
 - C) Ask the vendor to encrypt for you
 - D) CUECs are optional suggestions
 
@@ -297,8 +297,8 @@
 **Q14. If the vulnerability in Scenario B is confirmed reachable and exploitable, what is the remediation path?**
 
 - A) Pin to the vulnerable version permanently
-- B) Update beautifulsoup4 to a version that uses a patched libxml2, or override the transitive dependency version ✓
-- C) Ignore it since it's not your direct dependency
+- B) Ignore it since it's not your direct dependency
+- C) Update beautifulsoup4 to a version that uses a patched libxml2, or override the transitive dependency version ✓
 - D) Stop using HTML parsing entirely
 
 **Explanation:** Update the direct dependency if a new version fixes it, or explicitly override the transitive dependency version to a patched version.
@@ -310,9 +310,9 @@
 **Q15. How should you interpret this response?**
 
 - A) Accept it - they must be very secure
-- B) View it skeptically and ask follow-up questions about their detection capabilities and incident classification ✓
+- B) Reject them for being dishonest
 - C) This is the best possible answer
-- D) Reject them for being dishonest
+- D) View it skeptically and ask follow-up questions about their detection capabilities and incident classification ✓
 
 **Explanation:** No incidents in 3 years is unusual and may indicate weak detection rather than strong security. Ask about their detection capabilities and how they classify incidents.
 
@@ -331,8 +331,8 @@
 
 **Q1. What is SLSA (Supply chain Levels for Software Artifacts) designed to protect against?**
 
-- A) Network attacks
-- B) Tampering and integrity issues in the software build and distribution process ✓
+- A) Tampering and integrity issues in the software build and distribution process ✓
+- B) Network attacks
 - C) Social engineering
 - D) Physical theft
 
@@ -343,8 +343,8 @@
 **Q2. At which SLSA level is "non-falsifiable provenance" required?**
 
 - A) SLSA 1
-- B) SLSA 2
-- C) SLSA 3 ✓
+- B) SLSA 3 ✓
+- C) SLSA 2
 - D) SLSA 4
 
 **Explanation:** SLSA 3 requires non-falsifiable provenance (the build platform generates it, not the user), providing stronger tamper resistance.
@@ -353,8 +353,8 @@
 
 **Q3. What is Sigstore used for in supply chain security?**
 
-- A) Encrypting source code
-- B) Signing and verifying software artifacts using keyless signing with identity verification ✓
+- A) Signing and verifying software artifacts using keyless signing with identity verification ✓
+- B) Encrypting source code
 - C) Monitoring vendor security
 - D) Generating SBOMs
 
@@ -376,8 +376,8 @@
 **Q5. Which metric measures how quickly critical vulnerabilities in dependencies are remediated?**
 
 - A) Assessment Coverage
-- B) Supply Chain Vulnerability MTTR ✓
-- C) Contract Compliance
+- B) Contract Compliance
+- C) Supply Chain Vulnerability MTTR ✓
 - D) Vendor Incident Rate
 
 **Explanation:** Supply Chain Vulnerability MTTR (Mean Time to Remediate) tracks how quickly critical CVEs in dependencies are addressed.
@@ -394,8 +394,8 @@
 
 - A) The SOC 2 exceptions
 - B) The security rating
-- C) The vendor's intention to use customer data for AI model training ✓
-- D) Having 3 subprocessors
+- C) Having 3 subprocessors
+- D) The vendor's intention to use customer data for AI model training ✓
 
 **Explanation:** Using customer data for AI training raises major privacy, IP, and compliance concerns that require careful consideration or prohibition.
 
@@ -403,8 +403,8 @@
 
 **Q7. What contract clause should address the AI training concern in Scenario D?**
 
-- A) Just rely on the vendor's privacy policy
-- B) Explicit prohibition on using customer data for training, with audit rights to verify ✓
+- A) Explicit prohibition on using customer data for training, with audit rights to verify ✓
+- B) Just rely on the vendor's privacy policy
 - C) Price reduction clause
 - D) Longer termination notice
 
@@ -432,8 +432,8 @@
 **Q9. What should your 90-day progress report include for Scenario E?**
 
 - A) Only a list of vendors
-- B) Coverage metrics, critical vendor status, identified risks, remediation priorities, and resource needs ✓
-- C) Just a statement that work is ongoing
+- B) Just a statement that work is ongoing
+- C) Coverage metrics, critical vendor status, identified risks, remediation priorities, and resource needs ✓
 - D) Financial costs only
 
 **Explanation:** Progress reports should show what's been achieved (coverage), what's been found (risks), what's being done (remediation), and what's needed (resources).
@@ -443,9 +443,9 @@
 **Q10. As vendor security program matures, what indicates industry leadership?**
 
 - A) Having the most vendors
-- B) Contributing to standards (SLSA, Shared Assessments), publishing case studies, participating in industry groups ✓
+- B) Never having vendor incidents
 - C) Spending the most money
-- D) Never having vendor incidents
+- D) Contributing to standards (SLSA, Shared Assessments), publishing case studies, participating in industry groups ✓
 
 **Explanation:** Industry leadership is demonstrated through contributing to standards, sharing knowledge, participating in industry forums, and advancing the practice.
 
@@ -517,13 +517,13 @@
 ## Answer Key Summary
 
 ### L1 Answers
-1-B, 2-B, 3-B, 4-B, 5-B, 6-B, 7-B, 8-B, 9-C, 10-B
+1-A, 2-B, 3-A, 4-B, 5-C, 6-D, 7-A, 8-B, 9-C, 10-D
 
 ### L2 Answers
-1-B, 2-B, 3-B, 4-A, 5-B, 6-B, 7-C, 8-B, 9-C, 10-B, 11-B, 12-B, 13-B, 14-B, 15-B
+1-A, 2-B, 3-C, 4-A, 5-B, 6-C, 7-D, 8-A, 9-B, 10-C, 11-D, 12-A, 13-B, 14-C, 15-D
 
 ### L3 Answers
-1-B, 2-C, 3-B, 4-B, 5-B, 6-C, 7-B, 8-B, 9-B, 10-B
+1-A, 2-B, 3-A, 4-B, 5-C, 6-D, 7-A, 8-B, 9-C, 10-D
 Practical: Rubric-based evaluation
 
 ---

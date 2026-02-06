@@ -23,9 +23,9 @@
 
 **Q1. When using AI coding assistants, who is ultimately responsible for the security of the code?**
 
-- A) The AI vendor
+- A) The developer using the AI assistant ✓
 - B) The security team
-- C) The developer using the AI assistant ✓
+- C) The AI vendor
 - D) No one - AI code is always secure
 
 **Explanation:** Developers remain responsible for validating all AI-generated code and ensuring it follows security best practices.
@@ -46,8 +46,8 @@
 **Q3. What is "prompt injection" in the context of AI security?**
 
 - A) Injecting SQL into a database
-- B) User input that manipulates AI behavior by including malicious instructions ✓
-- C) Injecting JavaScript into web pages
+- B) Injecting JavaScript into web pages
+- C) User input that manipulates AI behavior by including malicious instructions ✓
 - D) A type of buffer overflow attack
 
 **Explanation:** Prompt injection occurs when user-controlled input contains instructions that override or modify the AI's intended operation.
@@ -58,8 +58,8 @@
 
 - A) Trust all user input
 - B) Only use AI for internal systems
-- C) Separate instructions from user content with clear delimiters and validate both input and output ✓
-- D) Disable the AI when suspicious input is detected
+- C) Disable the AI when suspicious input is detected
+- D) Separate instructions from user content with clear delimiters and validate both input and output ✓
 
 **Explanation:** Defense in depth - separating instructions from data, plus validating both inputs and outputs - provides the strongest protection.
 
@@ -67,8 +67,8 @@
 
 **Q5. When implementing an AI tool that reads files, what is the correct security approach?**
 
-- A) Allow the AI to read any file it requests
-- B) Validate paths against an allowlist and prevent path traversal ✓
+- A) Validate paths against an allowlist and prevent path traversal ✓
+- B) Allow the AI to read any file it requests
 - C) Only allow reading files smaller than 1MB
 - D) Require a password for each file read
 
@@ -90,8 +90,8 @@
 **Q7. What is the purpose of SAST tools in secure development?**
 
 - A) Test the running application for vulnerabilities
-- B) Find vulnerabilities in source code before deployment ✓
-- C) Manage API keys and secrets
+- B) Manage API keys and secrets
+- C) Find vulnerabilities in source code before deployment ✓
 - D) Monitor production for attacks
 
 **Explanation:** SAST (Static Application Security Testing) analyzes source code to find vulnerabilities during development.
@@ -102,8 +102,8 @@
 
 - A) Automatically fix everything the tool suggests
 - B) Ignore all findings as false positives
-- C) Review findings, understand the issue, and fix genuine vulnerabilities ✓
-- D) Disable the tool if there are too many findings
+- C) Disable the tool if there are too many findings
+- D) Review findings, understand the issue, and fix genuine vulnerabilities ✓
 
 **Explanation:** Developers should review findings critically, understand the security issue, and fix real vulnerabilities while documenting genuine false positives.
 
@@ -124,8 +124,8 @@ def get_user(user_id):
 
 **What is the security vulnerability?**
 
-- A) Missing error handling
-- B) SQL Injection via string formatting ✓
+- A) SQL Injection via string formatting ✓
+- B) Missing error handling
 - C) Missing authentication
 - D) No vulnerability present
 
@@ -163,8 +163,8 @@ def summarize_document(user_document):
 **What is the security vulnerability?**
 
 - A) The prompt is too short
-- B) Prompt injection - user content mixed with instructions ✓
-- C) Missing rate limiting
+- B) Missing rate limiting
+- C) Prompt injection - user content mixed with instructions ✓
 - D) No vulnerability present
 
 **Explanation:** User document content is mixed directly with instructions, allowing prompt injection. Fix: Use delimiters (`<document>` tags) and instruct AI to only process content within tags.
@@ -183,9 +183,9 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 **What is the security vulnerability?**
 
 - A) Missing error handling
-- B) Command injection - user can execute arbitrary commands ✓
+- B) XSS in output
 - C) Missing authentication
-- D) XSS in output
+- D) Command injection - user can execute arbitrary commands ✓
 
 **Explanation:** User input is passed directly to a shell command, allowing arbitrary command execution. This endpoint should be removed or heavily restricted with input validation.
 
@@ -204,8 +204,8 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 
 **Q1. In Python, which is the secure way to generate random tokens?**
 
-- A) `random.randint(0, 999999)`
-- B) `secrets.token_urlsafe(32)` ✓
+- A) `secrets.token_urlsafe(32)` ✓
+- B) `random.randint(0, 999999)`
 - C) `hash(str(time.time()))`
 - D) `uuid.uuid4()`
 
@@ -216,8 +216,8 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 **Q2. Which Express.js middleware provides comprehensive security headers?**
 
 - A) body-parser
-- B) cors
-- C) helmet ✓
+- B) helmet ✓
+- C) cors
 - D) morgan
 
 **Explanation:** Helmet sets various HTTP security headers (CSP, X-Frame-Options, etc.) to protect against common web vulnerabilities.
@@ -237,9 +237,9 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 
 **Q4. When configuring SAST in CI/CD, what is the best practice for handling findings?**
 
-- A) Fail the build on any finding
+- A) Fail on critical/high, warn on medium, track low ✓
 - B) Never fail the build - just report
-- C) Fail on critical/high, warn on medium, track low ✓
+- C) Fail the build on any finding
 - D) Only run SAST on release branches
 
 **Explanation:** A balanced approach: block deployments for serious issues, warn on moderate issues, and track everything for remediation.
@@ -260,8 +260,8 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 **Q6. When creating team security guidance, what should be included for AI integration?**
 
 - A) Only links to vendor documentation
-- B) Requirements for input validation, output sanitization, permission constraints, logging, and rate limiting ✓
-- C) A statement that AI code is automatically secure
+- B) A statement that AI code is automatically secure
+- C) Requirements for input validation, output sanitization, permission constraints, logging, and rate limiting ✓
 - D) Instructions to disable security tools for AI code
 
 **Explanation:** Team guidance should specify concrete security requirements for AI: validate inputs, sanitize outputs, constrain permissions, log actions, and implement rate limiting.
@@ -272,8 +272,8 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 
 - A) Use `exec.Command("sh", "-c", userInput)`
 - B) Escape special characters in user input
-- C) Avoid shell, pass arguments directly: `exec.Command("tool", userInput)` ✓
-- D) Run commands as root for full access
+- C) Run commands as root for full access
+- D) Avoid shell, pass arguments directly: `exec.Command("tool", userInput)` ✓
 
 **Explanation:** Avoiding the shell and passing arguments directly prevents shell metacharacter interpretation.
 
@@ -281,8 +281,8 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 
 **Q8. What is the correct approach for AI tool permission boundaries?**
 
-- A) Give AI all permissions for flexibility
-- B) Define explicit permissions per tool with allowlists and limits ✓
+- A) Define explicit permissions per tool with allowlists and limits ✓
+- B) Give AI all permissions for flexibility
 - C) Rely on the AI to self-limit
 - D) Only restrict file system access
 
@@ -304,8 +304,8 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 **Q10. What is the main benefit of integrating security tools into IDE vs. only CI/CD?**
 
 - A) It's cheaper
-- B) Developers get early feedback and can fix issues before commit ✓
-- C) IDE tools are more accurate
+- B) IDE tools are more accurate
+- C) Developers get early feedback and can fix issues before commit ✓
 - D) CI/CD tools don't work properly
 
 **Explanation:** IDE integration provides immediate feedback, allowing developers to fix issues as they code rather than after commit.
@@ -319,9 +319,9 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 **Q11. What is the primary security concern with this chatbot?**
 
 - A) The AI is too slow
-- B) The AI could be tricked into revealing other customers' order information ✓
+- B) Customers might not like AI support
 - C) The chatbot might use too many API tokens
-- D) Customers might not like AI support
+- D) The AI could be tricked into revealing other customers' order information ✓
 
 **Explanation:** Prompt injection could manipulate the AI to query/reveal information for other customers, or an unauthenticated user could request anyone's orders.
 
@@ -329,8 +329,8 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 
 **Q12. What security controls should be implemented for Scenario A?**
 
-- A) Only rate limiting
-- B) Authentication, authorization (verify requester owns the email), input validation, and output filtering ✓
+- A) Authentication, authorization (verify requester owns the email), input validation, and output filtering ✓
+- B) Only rate limiting
 - C) Only logging
 - D) Disable the order lookup feature
 
@@ -354,8 +354,8 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 **Q14. How should the AI code review tool's outputs be secured?**
 
 - A) Trust the AI to not leak sensitive information
-- B) Implement output filtering to scan for secrets/sensitive patterns before posting comments ✓
-- C) Only run the tool on public repositories
+- B) Only run the tool on public repositories
+- C) Implement output filtering to scan for secrets/sensitive patterns before posting comments ✓
 - D) Disable PR comments entirely
 
 **Explanation:** Output filtering should scan AI responses for secrets, PII, and sensitive patterns before posting publicly visible comments.
@@ -372,9 +372,9 @@ Code: subprocess.run(f"process {user_input}", shell=True)
 **Q15. What is the correct response to this finding?**
 
 - A) Suppress it as a false positive - AI tools make mistakes
-- B) Investigate, confirm it's a real vulnerability, fix by removing shell=True and using argument list, verify the fix ✓
+- B) Add a comment explaining why it's needed
 - C) Ignore it because it's in AI-related code
-- D) Add a comment explaining why it's needed
+- D) Investigate, confirm it's a real vulnerability, fix by removing shell=True and using argument list, verify the fix ✓
 
 **Explanation:** This is a genuine command injection vulnerability. Fix by using `subprocess.run(["process", user_input], shell=False)` to prevent shell interpretation.
 
@@ -393,8 +393,8 @@ Code: subprocess.run(f"process {user_input}", shell=True)
 
 **Q1. As a Security Champion, what percentage of your time should typically be allocated to security activities?**
 
-- A) 100% - full-time security role
-- B) 20-30% - balance security with development ✓
+- A) 20-30% - balance security with development ✓
+- B) 100% - full-time security role
 - C) 5% - occasional security tasks
 - D) 0% - Security Champions just have the title
 
@@ -405,8 +405,8 @@ Code: subprocess.run(f"process {user_input}", shell=True)
 **Q2. When measuring secure development effectiveness, which metric indicates issues escaping to production?**
 
 - A) Training completion rate
-- B) Vulnerability density (vulns per KLOC)
-- C) Escaped vulnerabilities ✓
+- B) Escaped vulnerabilities ✓
+- C) Vulnerability density (vulns per KLOC)
 - D) SAST tool adoption rate
 
 **Explanation:** Escaped vulnerabilities measures security issues found in production that should have been caught earlier.
@@ -415,8 +415,8 @@ Code: subprocess.run(f"process {user_input}", shell=True)
 
 **Q3. In AI application threat modeling, which AI-specific threat relates to the AI having more access than needed?**
 
-- A) Agent Goal Hijacking (AGH)
-- B) Excessive Agency (EA) ✓
+- A) Excessive Agency (EA) ✓
+- B) Agent Goal Hijacking (AGH)
 - C) Tool Misuse (TM)
 - D) Rogue Agents (RA)
 
@@ -427,8 +427,8 @@ Code: subprocess.run(f"process {user_input}", shell=True)
 **Q4. When contributing to industry secure coding standards, which organization focuses on web and AI application security?**
 
 - A) IEEE
-- B) ISO
-- C) OWASP ✓
+- B) OWASP ✓
+- C) ISO
 - D) IETF
 
 **Explanation:** OWASP (Open Web Application Security Project) maintains the LLM Top 10, ASVS, and other application security standards.
@@ -438,8 +438,8 @@ Code: subprocess.run(f"process {user_input}", shell=True)
 **Q5. What is the target MTTR (Mean Time to Remediate) for HIGH severity vulnerabilities in a mature security program?**
 
 - A) 24 hours
-- B) Less than 7 days ✓
-- C) 30 days
+- B) 30 days
+- C) Less than 7 days ✓
 - D) 90 days
 
 **Explanation:** High severity vulnerabilities typically have a 7-day remediation SLA in mature programs. Critical is faster (24-48h), medium is 30 days.
@@ -451,9 +451,9 @@ Code: subprocess.run(f"process {user_input}", shell=True)
 **Q6. What is the most critical attack scenario for this agent?**
 
 - A) The AI sends too many emails
-- B) An attacker uses prompt injection to have the AI exfiltrate sensitive database data via email ✓
+- B) Users don't like the AI's responses
 - C) The AI reads documents slowly
-- D) Users don't like the AI's responses
+- D) An attacker uses prompt injection to have the AI exfiltrate sensitive database data via email ✓
 
 **Explanation:** Combining database access (read sensitive data) with email (exfiltrate to attacker) via prompt injection is the highest-impact attack chain.
 
@@ -461,8 +461,8 @@ Code: subprocess.run(f"process {user_input}", shell=True)
 
 **Q7. What architectural control best addresses the risk in Q6?**
 
-- A) Remove the email capability
-- B) Implement separation of duties - database and email tools should require separate approval flows ✓
+- A) Implement separation of duties - database and email tools should require separate approval flows ✓
+- B) Remove the email capability
 - C) Add more logging
 - D) Rate limit the AI
 
@@ -475,8 +475,8 @@ Code: subprocess.run(f"process {user_input}", shell=True)
 **Q8. Which area needs the most improvement based on this scorecard?**
 
 - A) Training (85%)
-- B) Vulnerability Density (0.5/KLOC)
-- C) Security Testing (65%) ✓
+- B) Security Testing (65%) ✓
+- C) Vulnerability Density (0.5/KLOC)
 - D) MTTR High (5 days)
 
 **Explanation:** Security Testing at 65% is below the typical 80% target and is the lowest performing metric, indicating a gap in test coverage.
@@ -486,8 +486,8 @@ Code: subprocess.run(f"process {user_input}", shell=True)
 **Q9. How can a Security Champion improve the Security Testing metric?**
 
 - A) Write more unit tests
-- B) Conduct training on security testing, create security test templates, integrate security tests into CI/CD ✓
-- C) Remove complex code
+- B) Remove complex code
+- C) Conduct training on security testing, create security test templates, integrate security tests into CI/CD ✓
 - D) Reduce the target percentage
 
 **Explanation:** Champions can improve security testing through training, templates, and pipeline integration to make security testing easier for all developers.
@@ -497,9 +497,9 @@ Code: subprocess.run(f"process {user_input}", shell=True)
 **Q10. What is the key difference between leading and lagging security indicators?**
 
 - A) Leading indicators are faster to measure
-- B) Leading indicators predict future security (training, code review), lagging indicators measure past results (incidents, escaped vulns) ✓
+- B) There is no meaningful difference
 - C) Lagging indicators are more important
-- D) There is no meaningful difference
+- D) Leading indicators predict future security (training, code review), lagging indicators measure past results (incidents, escaped vulns) ✓
 
 **Explanation:** Leading indicators (training, proactive measures) predict future security posture, while lagging indicators (incidents) measure what already happened.
 
@@ -558,13 +558,13 @@ Code: subprocess.run(f"process {user_input}", shell=True)
 ## Answer Key Summary
 
 ### L1 Answers
-1-C, 2-B, 3-B, 4-C, 5-B, 6-B, 7-B, 8-C, 9-B, 10-B, 11-B, 12-B
+1-A, 2-B, 3-C, 4-D, 5-A, 6-B, 7-C, 8-D, 9-A, 10-B, 11-C, 12-D
 
 ### L2 Answers
-1-B, 2-C, 3-C, 4-C, 5-B, 6-B, 7-C, 8-B, 9-B, 10-B, 11-B, 12-B, 13-B, 14-B, 15-B
+1-A, 2-B, 3-C, 4-A, 5-B, 6-C, 7-D, 8-A, 9-B, 10-C, 11-D, 12-A, 13-B, 14-C, 15-D
 
 ### L3 Answers
-1-B, 2-C, 3-B, 4-C, 5-B, 6-B, 7-B, 8-C, 9-B, 10-B
+1-A, 2-B, 3-A, 4-B, 5-C, 6-D, 7-A, 8-B, 9-C, 10-D
 Practical: Rubric-based evaluation
 
 ---

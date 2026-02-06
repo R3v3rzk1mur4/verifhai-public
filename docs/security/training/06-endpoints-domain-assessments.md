@@ -16,8 +16,8 @@
 
 **Q1. What is a key benefit of AI-powered endpoint security?**
 
-- A) It makes computers slower
-- B) It detects threats quickly and continuously, 24/7 ✓
+- A) It detects threats quickly and continuously, 24/7 ✓
+- B) It makes computers slower
 - C) It eliminates the need for user awareness
 - D) It monitors everything you do for HR
 
@@ -38,9 +38,9 @@
 
 **Q3. What should you do if you receive a suspicious email?**
 
-- A) Click the links to investigate
+- A) Report it to security and delete it ✓
 - B) Forward it to everyone as a warning
-- C) Report it to security and delete it ✓
+- C) Click the links to investigate
 - D) Reply asking if it's legitimate
 
 **Explanation:** Don't interact with the email; report to security and delete it.
@@ -61,8 +61,8 @@
 **Q5. What does AI endpoint security monitor?**
 
 - A) Everything you type and all your personal files
-- B) Security threats, suspicious behavior, and potential malware ✓
-- C) Your job performance and productivity
+- B) Your job performance and productivity
+- C) Security threats, suspicious behavior, and potential malware ✓
 - D) Your personal emails and messages
 
 **Explanation:** AI focuses on security threats, not personal surveillance or performance monitoring.
@@ -72,9 +72,9 @@
 **Q6. Why is reporting suspicious emails important?**
 
 - A) It's just a compliance requirement
-- B) It helps protect colleagues from similar attacks ✓
+- B) Only security professionals should report
 - C) It's not important
-- D) Only security professionals should report
+- D) It helps protect colleagues from similar attacks ✓
 
 **Explanation:** When you report, security can block threats and warn others, protecting the whole organization.
 
@@ -82,8 +82,8 @@
 
 **Q7. What is a sign of a social engineering attack?**
 
-- A) A request with plenty of time to respond
-- B) Someone pressuring you to bypass normal procedures ✓
+- A) Someone pressuring you to bypass normal procedures ✓
+- B) A request with plenty of time to respond
 - C) Normal verification of your identity
 - D) Standard business communication
 
@@ -105,8 +105,8 @@
 **Q9. What is your role in endpoint security?**
 
 - A) None - AI handles everything
-- B) The last line of defense; report threats, follow best practices ✓
-- C) Only important for IT staff
+- B) Only important for IT staff
+- C) The last line of defense; report threats, follow best practices ✓
 - D) Optional participation
 
 **Explanation:** Users are the human firewall; AI catches most threats, but your awareness matters.
@@ -116,9 +116,9 @@
 **Q10. What should you do if AI quarantines your device?**
 
 - A) Try to reconnect to the network immediately
-- B) Contact IT immediately for assistance ✓
+- B) Turn off the device and ignore it
 - C) Wait indefinitely without action
-- D) Turn off the device and ignore it
+- D) Contact IT immediately for assistance ✓
 
 **Explanation:** Contact IT immediately; they can investigate the alert and restore access if appropriate.
 
@@ -130,8 +130,8 @@
 
 **Q1. Why are finance and HR roles targeted more by attackers?**
 
-- A) They have less security training
-- B) They have access to valuable data and can authorize actions ✓
+- A) They have access to valuable data and can authorize actions ✓
+- B) They have less security training
 - C) They use older computers
 - D) They work remotely more often
 
@@ -152,8 +152,8 @@
 
 **Q3. How should you verify unusual payment requests?**
 
-- A) Reply to the email asking for confirmation
-- B) Call the requester at a known phone number (not from the email) ✓
+- A) Call the requester at a known phone number (not from the email) ✓
+- B) Reply to the email asking for confirmation
 - C) Assume executives know best
 - D) Process quickly to avoid delays
 
@@ -177,8 +177,8 @@
 **Q5. What is the purpose of phishing simulations?**
 
 - A) To punish employees who click
-- B) To test and improve awareness through practice and learning ✓
-- C) To identify who should be fired
+- B) To identify who should be fired
+- C) To test and improve awareness through practice and learning ✓
 - D) To make security look busy
 
 **Explanation:** Simulations are educational tools to improve awareness, not punitive measures.
@@ -188,9 +188,9 @@
 **Q6. If you click on a phishing simulation, what should you do?**
 
 - A) Feel embarrassed and don't tell anyone
-- B) Read the training feedback and apply the learnings ✓
+- B) Disable your email security
 - C) Try to find who sent the simulation
-- D) Disable your email security
+- D) Read the training feedback and apply the learnings ✓
 
 **Explanation:** Simulations are learning opportunities; read the feedback and improve for next time.
 
@@ -200,8 +200,8 @@
 
 **Q7. How should you help?**
 
-- A) Tell them to click it and see what happens
-- B) Help them identify red flags and encourage reporting to security ✓
+- A) Help them identify red flags and encourage reporting to security ✓
+- B) Tell them to click it and see what happens
 - C) Click the link for them to test it
 - D) Tell them to ignore all security alerts
 
@@ -223,8 +223,8 @@
 **Q9. How can you support security culture in your team?**
 
 - A) Criticize colleagues who make security mistakes
-- B) Share security learnings and encourage reporting without judgment ✓
-- C) Ignore security to focus on productivity
+- B) Ignore security to focus on productivity
+- C) Share security learnings and encourage reporting without judgment ✓
 - D) Handle all security issues yourself
 
 **Explanation:** Build culture by sharing knowledge, encouraging reporting, and being non-judgmental about mistakes.
@@ -234,9 +234,9 @@
 **Q10. What should IT support do when a user clicks a phishing link?**
 
 - A) Tell them they failed and move on
-- B) Initiate incident response, help reset credentials, provide supportive training ✓
+- B) Report them to HR immediately
 - C) Ignore it if nothing bad happened
-- D) Report them to HR immediately
+- D) Initiate incident response, help reset credentials, provide supportive training ✓
 
 **Explanation:** IT should help contain the incident, reset credentials, and provide supportive education.
 
@@ -248,8 +248,8 @@
 
 **Q1. What is the primary role of a Security Champion?**
 
-- A) Replace the security team
-- B) Advocate for security in their team and be a first responder for security questions ✓
+- A) Advocate for security in their team and be a first responder for security questions ✓
+- B) Replace the security team
 - C) Enforce strict security rules
 - D) Report colleagues who make mistakes
 
@@ -260,8 +260,8 @@
 **Q2. What is a healthy phishing click rate target for an organization?**
 
 - A) 50%
-- B) 25%
-- C) <5% ✓
+- B) <5% ✓
+- C) 25%
 - D) 0% always
 
 **Explanation:** Industry targets are typically <5%; some clicks are inevitable, but rates should be low.
@@ -271,8 +271,8 @@
 **Q3. Why is phishing report rate as important as click rate?**
 
 - A) It's not important
-- B) High report rates show employees actively identify and report threats ✓
-- C) Report rate should be 0%
+- B) Report rate should be 0%
+- C) High report rates show employees actively identify and report threats ✓
 - D) Only click rate matters
 
 **Explanation:** Report rate shows proactive security culture; employees who report help protect others.
@@ -284,9 +284,9 @@
 **Q4. What should be the priority improvement focus?**
 
 - A) Punish the people who clicked
-- B) Improve training on identifying phishing AND simplify/encourage reporting ✓
+- B) Accept the results as normal
 - C) Stop running simulations
-- D) Accept the results as normal
+- D) Improve training on identifying phishing AND simplify/encourage reporting ✓
 
 **Explanation:** Address both issues: improve recognition skills AND make reporting easier/more encouraged.
 
@@ -294,8 +294,8 @@
 
 **Q5. What makes a security awareness campaign effective?**
 
-- A) Long, detailed emails about threats
-- B) Short, visual, actionable content with clear next steps ✓
+- A) Short, visual, actionable content with clear next steps ✓
+- B) Long, detailed emails about threats
 - C) Monthly mandatory 2-hour training sessions
 - D) Fear-based messaging about consequences
 
@@ -317,8 +317,8 @@
 **Q7. What is a key characteristic of positive security culture?**
 
 - A) Fear of reporting mistakes
-- B) Psychological safety to report concerns without judgment ✓
-- C) Strict punishment for security failures
+- B) Strict punishment for security failures
+- C) Psychological safety to report concerns without judgment ✓
 - D) Security handled only by security team
 
 **Explanation:** Positive culture means people feel safe reporting concerns and mistakes without fear.
@@ -328,9 +328,9 @@
 **Q8. How often should security awareness training be refreshed?**
 
 - A) Once, when hired
-- B) Continuous with regular campaigns, simulations, and annual comprehensive training ✓
+- B) Never - once trained is enough
 - C) Only after breaches
-- D) Never - once trained is enough
+- D) Continuous with regular campaigns, simulations, and annual comprehensive training ✓
 
 **Explanation:** Security awareness requires continuous reinforcement, not one-time training.
 
@@ -372,13 +372,13 @@
 ## Answer Key Summary
 
 ### L1 Answers
-1-B, 2-B, 3-C, 4-B, 5-B, 6-B, 7-B, 8-B, 9-B, 10-B
+1-A, 2-B, 3-A, 4-B, 5-C, 6-D, 7-A, 8-B, 9-C, 10-D
 
 ### L2 Answers
-1-B, 2-B, 3-B, 4-B, 5-B, 6-B, 7-B, 8-B, 9-B, 10-B
+1-A, 2-B, 3-A, 4-B, 5-C, 6-D, 7-A, 8-B, 9-C, 10-D
 
 ### L3 Answers
-1-B, 2-C, 3-B, 4-B, 5-B, 6-B, 7-B, 8-B
+1-A, 2-B, 3-C, 4-D, 5-A, 6-B, 7-C, 8-D
 Practical: Rubric-based evaluation
 
 ---
