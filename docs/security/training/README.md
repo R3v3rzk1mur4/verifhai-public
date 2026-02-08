@@ -21,6 +21,14 @@ A comprehensive training curriculum for building and maintaining secure Human-As
 | Lab | Primary Audience | Duration | Questions |
 |-----|------------------|----------|-----------|
 | [JWT Security for Python Developers](./lab-jwt-security.md) | Python Developers, AppSec | L1: 1h, L2: 2h, L3: 3h | 28 |
+| [SSO & SAML Security for Python Developers](./lab-sso-saml-security.md) | Python Developers, AppSec, Identity Engineers | L1: 1h, L2: 2h, L3: 3h | 28 |
+
+### Video Scripts
+
+| Series | Episodes | Total Runtime | Lab Module |
+|--------|----------|---------------|------------|
+| [JWT Security Video Scripts](./lab-jwt-security-video-scripts.md) | 8 episodes | ~80 min | EG-LAB-JWT-001 |
+| [SSO & SAML Security Video Scripts](./lab-sso-saml-security-video-scripts.md) | 10 episodes | ~95 min | EG-LAB-SAML-001 |
 
 ---
 
