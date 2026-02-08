@@ -22,6 +22,15 @@ A comprehensive training curriculum for building and maintaining secure Human-As
 |-----|------------------|----------|-----------|
 | [JWT Security for Python Developers](./lab-jwt-security.md) | Python Developers, AppSec | L1: 1h, L2: 2h, L3: 3h | 28 |
 | [SSO & SAML Security for Python Developers](./lab-sso-saml-security.md) | Python Developers, AppSec, Identity Engineers | L1: 1h, L2: 2h, L3: 3h | 28 |
+| [JWT Security Testing (Pentest)](./lab-jwt-pentest.md) | Pentesters, AppSec, Developers | L1: 1.5h, L2: 2.5h, L3: 3h | 28 |
+| [SAML Security Testing (Pentest)](./lab-saml-pentest.md) | Pentesters, AppSec, Developers | L1: 1.5h, L2: 2.5h, L3: 3h | 28 |
+
+### Vulnerable Target Applications
+
+| Application | Target Lab | Vulnerabilities | Setup |
+|-------------|-----------|----------------|-------|
+| [vulnerable-jwt-app.py](./apps/vulnerable-jwt-app.py) | EG-LAB-JWT-PENTEST-001 | 10 planted JWT vulns | `python apps/vulnerable-jwt-app.py` |
+| [vulnerable-saml-app.py](./apps/vulnerable-saml-app.py) | EG-LAB-SAML-PENTEST-001 | 9 planted SAML vulns | `python apps/vulnerable-saml-app.py` |
 
 ### Video Scripts
 
@@ -29,6 +38,8 @@ A comprehensive training curriculum for building and maintaining secure Human-As
 |--------|----------|---------------|------------|
 | [JWT Security Video Scripts](./lab-jwt-security-video-scripts.md) | 8 episodes | ~80 min | EG-LAB-JWT-001 |
 | [SSO & SAML Security Video Scripts](./lab-sso-saml-security-video-scripts.md) | 10 episodes | ~95 min | EG-LAB-SAML-001 |
+| [JWT Security Testing Video Scripts](./lab-jwt-pentest-video-scripts.md) | 10 episodes | ~100 min | EG-LAB-JWT-PENTEST-001 |
+| [SAML Security Testing Video Scripts](./lab-saml-pentest-video-scripts.md) | 10 episodes | ~105 min | EG-LAB-SAML-PENTEST-001 |
 
 ### Slide Decks
 
@@ -36,6 +47,8 @@ A comprehensive training curriculum for building and maintaining secure Human-As
 |------|--------|----------|-------|
 | [JWT Security Slides](./slides/jwt-security-slides.html) | reveal.js HTML | 8 | Open in browser, press S for speaker notes |
 | [SSO & SAML Security Slides](./slides/saml-security-slides.html) | reveal.js HTML | 10 | Open in browser, press S for speaker notes |
+| [JWT Security Testing Slides](./slides/jwt-pentest-slides.html) | reveal.js HTML | 10 | Open in browser, press S for speaker notes |
+| [SAML Security Testing Slides](./slides/saml-pentest-slides.html) | reveal.js HTML | 10 | Open in browser, press S for speaker notes |
 
 ---
 
@@ -82,6 +95,13 @@ Core Module (L1-L2) → Data Domain (L1-L3) → Vendors Domain (L1-L2)
 **Duration:** ~10 hours
 ```
 Core Module (L1-L2) → [Relevant Domain L1-L2] → Endpoints Domain (L1-L3)
+```
+
+### Path 6: Penetration Testers
+**Duration:** ~20 hours
+```
+Core Module (L1-L2) → Software Domain (L1-L2) → JWT Security Lab (L1-L3)
+→ JWT Pentest Lab (L1-L3) → SAML Security Lab (L1-L3) → SAML Pentest Lab (L1-L3)
 ```
 
 ---
