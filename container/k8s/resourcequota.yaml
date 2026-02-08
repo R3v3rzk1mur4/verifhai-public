@@ -1,0 +1,27 @@
+# Verifhai ResourceQuota
+# Caps total resource consumption within the verifhai namespace.
+# Prevents runaway pods from consuming cluster resources.
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: verifhai-quota
+  namespace: verifhai
+  labels:
+    app.kubernetes.io/name: verifhai
+    app.kubernetes.io/component: resource-management
+spec:
+  hard:
+    # Compute limits
+    requests.cpu: "2"
+    requests.memory: 2Gi
+    limits.cpu: "4"
+    limits.memory: 4Gi
+    # Pod count limit
+    pods: "4"
+    # PVC limits
+    persistentvolumeclaims: "2"
+    requests.storage: 10Gi
+    # Service limits
+    services: "2"
+    services.loadbalancers: "0"
+    services.nodeports: "0"

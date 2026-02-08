@@ -1,0 +1,18 @@
+# Verifhai Namespace with Pod Security Standards (Restricted)
+# Enforces the most restrictive security policy at the namespace level.
+# All pods MUST: run as non-root, drop all capabilities, use read-only rootfs,
+# disallow privilege escalation, and use restricted seccomp profiles.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: verifhai
+  labels:
+    app.kubernetes.io/name: verifhai
+    app.kubernetes.io/part-of: verifhai
+    # Pod Security Standards - enforce restricted level
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: latest
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/audit-version: latest
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/warn-version: latest

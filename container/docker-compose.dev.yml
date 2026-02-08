@@ -1,0 +1,76 @@
+# Verifhai Development Compose Override
+# Extends docker-compose.yml with development-friendly settings.
+#
+# Usage:
+#   docker compose -f container/docker-compose.yml -f container/docker-compose.dev.yml up -d
+#   docker compose -f container/docker-compose.yml -f container/docker-compose.dev.yml exec verifhai bash
+
+services:
+  verifhai:
+    build:
+      context: ..
+      dockerfile: container/Dockerfile.dev
+    image: verifhai-dev:0.1.0
+    container_name: verifhai-dev
+
+    # Override: Allow writable rootfs for editable installs
+    read_only: false
+
+    # Keep security basics even in dev
+    security_opt:
+      - "no-new-privileges:true"
+    cap_drop:
+      - ALL
+
+    # Dev resource limits (more generous)
+    deploy:
+      resources:
+        limits:
+          cpus: "4.0"
+          memory: 4G
+          pids: 512
+
+    # Mount source code for live editing
+    volumes:
+      - ../src:/opt/verifhai-src/src:rw
+      - ../tests:/workspace/tests:rw
+      - ../ci:/workspace/ci:ro
+      - ../templates:/opt/verifhai/templates:ro
+      - ../workflows:/opt/verifhai/skill/workflows:ro
+      - ../SKILL.md:/opt/verifhai/skill/SKILL.md:ro
+      - ../pyproject.toml:/opt/verifhai-src/pyproject.toml:ro
+      - verifhai-dev-workspace:/workspace/projects
+      - verifhai-dev-home:/home/verifhai
+
+    # Dev environment variables
+    environment:
+      - HAIAMM_DATA_DIR=/opt/haiamm
+      - VERIFHAI_HOME=/opt/verifhai
+      - VERIFHAI_WORKSPACE=/workspace
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+      - VERIFHAI_DEV=1
+      # API key via environment in dev (secrets file not required)
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+
+    # Override: Use non-internal network for outbound access (API calls, pip, etc.)
+    networks:
+      - verifhai-dev
+
+    # Interactive TTY for development
+    stdin_open: true
+    tty: true
+
+    # Don't use Docker secrets in dev - use env var
+    secrets: []
+
+networks:
+  verifhai-dev:
+    driver: bridge
+    # NOT internal - allows outbound network access for development
+
+volumes:
+  verifhai-dev-workspace:
+    driver: local
+  verifhai-dev-home:
+    driver: local

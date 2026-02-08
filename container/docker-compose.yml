@@ -1,0 +1,115 @@
+# Verifhai Production Docker Compose
+# 11-Layer Defense in Depth Configuration
+#
+# Usage:
+#   docker compose -f container/docker-compose.yml up -d
+#   docker compose -f container/docker-compose.yml exec verifhai verifhai assess
+#
+# Requires:
+#   - ANTHROPIC_API_KEY in Docker secrets or environment
+#   - seccomp profile loaded (container/security/seccomp-profile.json)
+#   - AppArmor profile loaded (sudo apparmor_parser -r container/security/apparmor-profile)
+
+services:
+  verifhai:
+    build:
+      context: ..
+      dockerfile: container/Dockerfile
+    image: verifhai:0.1.0
+    container_name: verifhai
+
+    # Layer 2: Non-root user
+    user: "10001:10001"
+
+    # Layer 3: Read-only root filesystem
+    read_only: true
+
+    # Layer 5: No new privileges
+    security_opt:
+      - "no-new-privileges:true"
+      # Layer 6: Custom seccomp profile
+      - "seccomp=security/seccomp-profile.json"
+      # Layer 7: AppArmor profile (must be pre-loaded on host)
+      - "apparmor=verifhai-container"
+
+    # Layer 4: Drop ALL capabilities, add NONE
+    cap_drop:
+      - ALL
+
+    # Layer 8: Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2G
+          pids: 256
+        reservations:
+          cpus: "0.5"
+          memory: 512M
+
+    # Writable tmpfs mounts (required with read-only rootfs)
+    tmpfs:
+      - /tmp:size=256M,mode=1777,uid=10001,gid=10001
+      - /tmp/.verifhai:size=64M,mode=0755,uid=10001,gid=10001
+      - /home/verifhai:size=64M,mode=0755,uid=10001,gid=10001
+
+    # Persistent volumes
+    volumes:
+      - verifhai-workspace:/workspace
+      - verifhai-results:/workspace/.verifhai
+
+    # Environment
+    environment:
+      - HAIAMM_DATA_DIR=/opt/haiamm
+      - VERIFHAI_HOME=/opt/verifhai
+      - VERIFHAI_WORKSPACE=/workspace
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+      - NODE_ENV=production
+
+    # Secrets (Layer 6 - API key via Docker secrets, not env vars)
+    secrets:
+      - anthropic_api_key
+
+    # Layer 9: Internal-only network (no direct internet access)
+    networks:
+      - verifhai-internal
+
+    # Layer 12: Health check
+    healthcheck:
+      test: ["/usr/local/bin/healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      start_period: 10s
+      retries: 3
+
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        tag: "verifhai"
+
+    restart: unless-stopped
+
+# Layer 9: Internal-only network
+networks:
+  verifhai-internal:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.28.0.0/24
+
+# Persistent volumes for workspace and results
+volumes:
+  verifhai-workspace:
+    driver: local
+  verifhai-results:
+    driver: local
+
+# Docker secrets - API key from file, not hardcoded
+secrets:
+  anthropic_api_key:
+    file: ${ANTHROPIC_API_KEY_FILE:-./secrets/anthropic_api_key.txt}

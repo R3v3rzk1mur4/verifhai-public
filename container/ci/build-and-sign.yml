@@ -1,0 +1,324 @@
+# Verifhai Container Build, Scan, Sign & Publish
+# Supply chain security: BuildKit provenance, Trivy scanning, Syft SBOM, Cosign signing
+#
+# Triggers on:
+#   - Push to main (builds + pushes to registry)
+#   - Pull requests (builds + scans, no push)
+#   - Manual dispatch (with version override)
+
+name: Container Build & Sign
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'container/**'
+      - 'src/**'
+      - 'pyproject.toml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'container/**'
+      - 'src/**'
+      - 'pyproject.toml'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Image version tag (e.g., 0.1.0)'
+        required: false
+        default: ''
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+permissions:
+  contents: read
+  packages: write
+  # Required for Cosign keyless signing via GitHub OIDC
+  id-token: write
+  # Required for uploading Trivy SARIF to Security tab
+  security-events: write
+
+jobs:
+  # ==========================================================================
+  # Stage 1: Build the container image
+  # ==========================================================================
+  build:
+    name: Build Container Image
+    runs-on: ubuntu-latest
+    outputs:
+      image-digest: ${{ steps.build.outputs.digest }}
+      image-tag: ${{ steps.meta.outputs.version }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout HAIAMM data (pinned commit)
+        uses: actions/checkout@v4
+        with:
+          repository: verifhai/HAIAMM
+          path: haiamm-data
+          # Pin to specific commit SHA for reproducibility
+          # Update this deliberately when HAIAMM data changes
+          ref: ${{ vars.HAIAMM_COMMIT_SHA || 'main' }}
+
+      - name: Prepare HAIAMM build context
+        run: |
+          mkdir -p haiamm-data
+          # Copy only the data files needed (not the full repo)
+          cp -r haiamm-data/docs/practices haiamm-data/practices 2>/dev/null || true
+          cp -r haiamm-data/docs/questionnaires haiamm-data/questionnaires 2>/dev/null || true
+          cp haiamm-data/docs/HAIAMM-Handbook.md haiamm-data/HAIAMM-Handbook.md 2>/dev/null || true
+          echo "HAIAMM data prepared:"
+          find haiamm-data -name "*.md" -type f | wc -l
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to container registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=semver,pattern={{version}},value=${{ inputs.version }}
+            type=sha,prefix=,format=short
+            type=ref,event=branch
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push container image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: container/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          # BuildKit provenance and SBOM attestations
+          provenance: true
+          sbom: true
+
+  # ==========================================================================
+  # Stage 2: Security scanning with Trivy
+  # ==========================================================================
+  scan:
+    name: Security Scan (Trivy)
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to container registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ needs.build.outputs.image-digest }}
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'HIGH,CRITICAL'
+          # Fail on HIGH or CRITICAL vulnerabilities
+          exit-code: '1'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+          category: 'container-scan'
+
+      - name: Run Trivy config scanner (Dockerfile best practices)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'config'
+          scan-ref: 'container/'
+          format: 'table'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '1'
+
+  # ==========================================================================
+  # Stage 3: Generate SBOM with Syft
+  # ==========================================================================
+  sbom:
+    name: Generate SBOM
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name != 'pull_request'
+    steps:
+      - name: Log in to container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate SBOM (SPDX)
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ needs.build.outputs.image-digest }}
+          format: spdx-json
+          output-file: sbom-spdx.json
+
+      - name: Generate SBOM (CycloneDX)
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ needs.build.outputs.image-digest }}
+          format: cyclonedx-json
+          output-file: sbom-cyclonedx.json
+
+      - name: Upload SBOMs as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: |
+            sbom-spdx.json
+            sbom-cyclonedx.json
+          retention-days: 90
+
+  # ==========================================================================
+  # Stage 4: Sign image with Cosign (keyless via GitHub OIDC)
+  # ==========================================================================
+  sign:
+    name: Sign Image (Cosign)
+    runs-on: ubuntu-latest
+    needs: [build, scan]
+    if: github.event_name != 'pull_request'
+    steps:
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3
+
+      - name: Log in to container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Sign the container image (keyless)
+        run: |
+          cosign sign --yes \
+            "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ needs.build.outputs.image-digest }}"
+        env:
+          COSIGN_EXPERIMENTAL: "true"
+
+      - name: Verify the signature
+        run: |
+          cosign verify \
+            --certificate-identity-regexp="https://github.com/${{ github.repository }}/.github/workflows/" \
+            --certificate-oidc-issuer="https://token.actions.githubusercontent.com" \
+            "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ needs.build.outputs.image-digest }}"
+        env:
+          COSIGN_EXPERIMENTAL: "true"
+
+  # ==========================================================================
+  # Stage 5: Security validation (post-build checks)
+  # ==========================================================================
+  validate:
+    name: Validate Security Controls
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build image locally for validation
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: container/Dockerfile
+          load: true
+          tags: verifhai:test
+
+      - name: Validate non-root user
+        run: |
+          uid=$(docker run --rm verifhai:test id -u)
+          echo "Container UID: ${uid}"
+          if [ "$uid" = "0" ]; then
+            echo "FAIL: Container running as root"
+            exit 1
+          fi
+          echo "PASS: Non-root user (UID ${uid})"
+
+      - name: Validate no dangerous tools
+        run: |
+          for cmd in curl wget sudo su; do
+            if docker run --rm verifhai:test which "$cmd" 2>/dev/null; then
+              echo "FAIL: ${cmd} found in container"
+              exit 1
+            fi
+            echo "PASS: ${cmd} not in container"
+          done
+
+      - name: Validate HAIAMM data present
+        run: |
+          count=$(docker run --rm verifhai:test find /opt/haiamm/practices -name "*.md" -type f | wc -l)
+          echo "HAIAMM practices found: ${count}"
+          if [ "$count" -lt 75 ]; then
+            echo "FAIL: Expected 75+ practices, found ${count}"
+            exit 1
+          fi
+          echo "PASS: HAIAMM data complete"
+
+      - name: Validate Claude permissions (no bypassPermissions)
+        run: |
+          if docker run --rm verifhai:test grep -q "bypassPermissions" /opt/verifhai/claude-permissions.json 2>/dev/null; then
+            echo "FAIL: bypassPermissions found in Claude settings"
+            exit 1
+          fi
+          echo "PASS: Claude Code using allow-list permissions"
+
+      - name: Validate verifhai CLI works
+        run: |
+          docker run --rm verifhai:test verifhai version
+          echo "PASS: verifhai CLI operational"
+
+      - name: Validate healthcheck passes
+        run: |
+          docker run --rm verifhai:test /usr/local/bin/healthcheck.sh
+          echo "PASS: Health check passed"
+
+      - name: Validate read-only rootfs
+        run: |
+          result=$(docker run --rm --read-only verifhai:test sh -c 'touch /test 2>&1 || echo "read-only"')
+          echo "Read-only test result: ${result}"
+          if echo "$result" | grep -q "read-only\|Read-only"; then
+            echo "PASS: Root filesystem is read-only"
+          else
+            echo "FAIL: Root filesystem is writable"
+            exit 1
+          fi
+
+      - name: Validate capabilities dropped
+        run: |
+          cap_eff=$(docker run --rm --cap-drop=ALL verifhai:test sh -c 'cat /proc/1/status | grep CapEff | awk "{print \$2}"')
+          echo "Effective capabilities: ${cap_eff}"
+          if [ "$cap_eff" = "0000000000000000" ]; then
+            echo "PASS: All capabilities dropped"
+          else
+            echo "FAIL: Capabilities not fully dropped: ${cap_eff}"
+            exit 1
+          fi

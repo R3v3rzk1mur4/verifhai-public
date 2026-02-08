@@ -1,0 +1,21 @@
+# Verifhai Service
+# ClusterIP service - internal only, no external exposure.
+# Placeholder for future API/webhook endpoints.
+apiVersion: v1
+kind: Service
+metadata:
+  name: verifhai
+  namespace: verifhai
+  labels:
+    app.kubernetes.io/name: verifhai
+    app.kubernetes.io/component: networking
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: verifhai
+  ports:
+    # Placeholder port for future API endpoint
+    - name: http
+      port: 8080
+      targetPort: 8080
+      protocol: TCP

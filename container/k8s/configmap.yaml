@@ -1,0 +1,22 @@
+# Verifhai ConfigMap
+# Non-sensitive configuration for the verifhai container.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: verifhai-config
+  namespace: verifhai
+  labels:
+    app.kubernetes.io/name: verifhai
+    app.kubernetes.io/component: config
+data:
+  # HAIAMM data paths (bundled in image at these locations)
+  HAIAMM_DATA_DIR: "/opt/haiamm"
+  VERIFHAI_HOME: "/opt/verifhai"
+  VERIFHAI_WORKSPACE: "/workspace"
+  # Python configuration
+  PYTHONDONTWRITEBYTECODE: "1"
+  PYTHONUNBUFFERED: "1"
+  # Node.js configuration
+  NODE_ENV: "production"
+  # Claude Code settings
+  CLAUDE_CODE_SETTINGS_FILE: "/opt/verifhai/claude-permissions.json"

@@ -1,0 +1,26 @@
+# Verifhai RuntimeClass - gVisor Support
+# Optional: Provides an additional sandboxing layer using gVisor (runsc).
+# gVisor intercepts all syscalls in userspace, providing stronger isolation
+# than seccomp alone.
+#
+# Prerequisites:
+#   - gVisor installed on cluster nodes: https://gvisor.dev/docs/user_guide/install/
+#   - containerd configured with runsc runtime
+#
+# To enable: uncomment runtimeClassName in deployment.yaml
+apiVersion: node.k8s.io/v1
+kind: RuntimeClass
+metadata:
+  name: gvisor
+  labels:
+    app.kubernetes.io/name: verifhai
+    app.kubernetes.io/component: runtime-security
+handler: runsc
+overhead:
+  podFixed:
+    cpu: 100m
+    memory: 64Mi
+scheduling:
+  nodeSelector:
+    # Only schedule on nodes with gVisor installed
+    gvisor.io/enabled: "true"

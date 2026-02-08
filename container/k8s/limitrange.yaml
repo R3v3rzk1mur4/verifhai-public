@@ -1,0 +1,34 @@
+# Verifhai LimitRange
+# Sets default and maximum resource limits per container.
+# Ensures every pod has resource constraints even if not explicitly set.
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: verifhai-limits
+  namespace: verifhai
+  labels:
+    app.kubernetes.io/name: verifhai
+    app.kubernetes.io/component: resource-management
+spec:
+  limits:
+    - type: Container
+      # Default limits applied if pod doesn't specify
+      default:
+        cpu: "1"
+        memory: 1Gi
+      # Default requests applied if pod doesn't specify
+      defaultRequest:
+        cpu: 100m
+        memory: 128Mi
+      # Maximum any single container can request
+      max:
+        cpu: "2"
+        memory: 2Gi
+      # Minimum any single container must request
+      min:
+        cpu: 50m
+        memory: 64Mi
+    - type: Pod
+      max:
+        cpu: "2"
+        memory: 2Gi

@@ -1,0 +1,170 @@
+# Verifhai Deployment
+# Full security context implementing all 11 defense layers.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: verifhai
+  namespace: verifhai
+  labels:
+    app.kubernetes.io/name: verifhai
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/component: assessment-tool
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: verifhai
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: verifhai
+        app.kubernetes.io/version: "0.1.0"
+      annotations:
+        # Trigger rollout on config changes
+        checksum/config: "{{ include (print $.Template.BasePath \"/configmap.yaml\") . | sha256sum }}"
+    spec:
+      serviceAccountName: verifhai
+      automountServiceAccountToken: false
+
+      # Optional: Use gVisor runtime for additional sandboxing
+      # Uncomment if gVisor is available on the cluster
+      # runtimeClassName: gvisor
+
+      # Pod-level security context
+      securityContext:
+        # Layer 2: Non-root
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        runAsNonRoot: true
+        # Seccomp profile (Layer 6)
+        seccompProfile:
+          type: RuntimeDefault
+
+      # Prevent pods from scheduling on the same node (optional HA)
+      # affinity:
+      #   podAntiAffinity:
+      #     preferredDuringSchedulingIgnoredDuringExecution:
+      #       - weight: 100
+      #         podAffinityTerm:
+      #           labelSelector:
+      #             matchExpressions:
+      #               - key: app.kubernetes.io/name
+      #                 operator: In
+      #                 values:
+      #                   - verifhai
+      #           topologyKey: kubernetes.io/hostname
+
+      containers:
+        - name: verifhai
+          image: verifhai:0.1.0
+          imagePullPolicy: IfNotPresent
+
+          # Container-level security context
+          securityContext:
+            # Layer 2: Non-root
+            runAsUser: 10001
+            runAsGroup: 10001
+            runAsNonRoot: true
+            # Layer 3: Read-only root filesystem
+            readOnlyRootFilesystem: true
+            # Layer 4: Drop ALL capabilities
+            capabilities:
+              drop:
+                - ALL
+            # Layer 5: No privilege escalation
+            allowPrivilegeEscalation: false
+            # Layer 6: Seccomp
+            seccompProfile:
+              type: RuntimeDefault
+
+          # Environment from ConfigMap
+          envFrom:
+            - configMapRef:
+                name: verifhai-config
+
+          # API key from Secret
+          env:
+            - name: ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: verifhai-api-keys
+                  key: ANTHROPIC_API_KEY
+                  optional: true
+
+          # Layer 8: Resource limits
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "2"
+              memory: 2Gi
+
+          # Volume mounts
+          volumeMounts:
+            # Writable /tmp (required for read-only rootfs)
+            - name: tmp
+              mountPath: /tmp
+            # Writable home directory
+            - name: home
+              mountPath: /home/verifhai
+            # Persistent workspace
+            - name: workspace
+              mountPath: /workspace
+
+          # Liveness probe - is the container still running?
+          livenessProbe:
+            exec:
+              command:
+                - /usr/local/bin/healthcheck.sh
+            initialDelaySeconds: 15
+            periodSeconds: 60
+            timeoutSeconds: 10
+            failureThreshold: 3
+
+          # Readiness probe - is the container ready to serve?
+          readinessProbe:
+            exec:
+              command:
+                - /usr/local/bin/healthcheck.sh
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+
+          # Startup probe - allow longer initial startup
+          startupProbe:
+            exec:
+              command:
+                - /usr/local/bin/healthcheck.sh
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 10
+            failureThreshold: 12
+
+      volumes:
+        # Memory-backed tmpfs volumes (ephemeral, more secure)
+        - name: tmp
+          emptyDir:
+            medium: Memory
+            sizeLimit: 256Mi
+        - name: home
+          emptyDir:
+            medium: Memory
+            sizeLimit: 64Mi
+        # Persistent workspace volume
+        - name: workspace
+          persistentVolumeClaim:
+            claimName: verifhai-workspace
+
+      # Graceful shutdown
+      terminationGracePeriodSeconds: 30
+
+      # DNS policy
+      dnsPolicy: ClusterFirst
