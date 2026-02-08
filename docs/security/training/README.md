@@ -14,7 +14,13 @@ A comprehensive training curriculum for building and maintaining secure Human-As
 | [Processes Domain](./05-processes-domain.md) | SOC, Security Ops | 1 hour | 30 |
 | [Endpoints Domain](./06-endpoints-domain.md) | All Employees | 45 min | 28 |
 
-**Total: 237 assessment questions across 7 modules**
+**Total: 237 assessment questions across 7 modules + hands-on labs**
+
+### Labs
+
+| Lab | Primary Audience | Duration | Questions |
+|-----|------------------|----------|-----------|
+| [JWT Security for Python Developers](./lab-jwt-security.md) | Python Developers, AppSec | L1: 1h, L2: 2h, L3: 3h | 28 |
 
 ---
 
