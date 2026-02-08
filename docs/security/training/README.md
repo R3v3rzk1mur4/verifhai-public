@@ -30,6 +30,13 @@ A comprehensive training curriculum for building and maintaining secure Human-As
 | [JWT Security Video Scripts](./lab-jwt-security-video-scripts.md) | 8 episodes | ~80 min | EG-LAB-JWT-001 |
 | [SSO & SAML Security Video Scripts](./lab-sso-saml-security-video-scripts.md) | 10 episodes | ~95 min | EG-LAB-SAML-001 |
 
+### Slide Decks
+
+| Deck | Format | Episodes | Usage |
+|------|--------|----------|-------|
+| [JWT Security Slides](./slides/jwt-security-slides.html) | reveal.js HTML | 8 | Open in browser, press S for speaker notes |
+| [SSO & SAML Security Slides](./slides/saml-security-slides.html) | reveal.js HTML | 10 | Open in browser, press S for speaker notes |
+
 ---
 
 ## Maturity Progression

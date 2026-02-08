@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SSO & SAML Security for Python Developers - Verifhai Training</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/black.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
+<style>
+:root { --r-heading-color: #58a6ff; --r-link-color: #58a6ff; }
+.reveal { font-size: 28px; }
+.reveal h1, .reveal h2, .reveal h3 { text-transform: none; }
+.reveal h1 { font-size: 2em; }
+.reveal h2 { font-size: 1.5em; color: #58a6ff; }
+.reveal h3 { font-size: 1.2em; color: #79c0ff; }
+.reveal pre { width: 100%; font-size: 0.55em; }
+.reveal pre code { max-height: 500px; padding: 15px; }
+.reveal .small-code pre { font-size: 0.48em; }
+.vuln { color: #f85149; font-weight: bold; }
+.secure { color: #3fb950; font-weight: bold; }
+.warn { color: #d29922; font-weight: bold; }
+.highlight-box { background: rgba(88,166,255,0.15); border-left: 4px solid #58a6ff; padding: 15px 20px; margin: 15px 0; text-align: left; border-radius: 4px; }
+.danger-box { background: rgba(248,81,73,0.15); border-left: 4px solid #f85149; padding: 15px 20px; margin: 15px 0; text-align: left; border-radius: 4px; }
+.success-box { background: rgba(63,185,80,0.15); border-left: 4px solid #3fb950; padding: 15px 20px; margin: 15px 0; text-align: left; border-radius: 4px; }
+table { margin: 0 auto; border-collapse: collapse; font-size: 0.8em; }
+th, td { border: 1px solid #444; padding: 8px 14px; text-align: left; }
+th { background: rgba(88,166,255,0.2); color: #58a6ff; }
+.episode-card { background: linear-gradient(135deg, #161b22, #0d1117); border: 1px solid #30363d; border-radius: 12px; padding: 40px; }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.7em; margin: 0 4px; }
+.badge-l1 { background: #238636; }
+.badge-l2 { background: #9e6a03; }
+.badge-l3 { background: #da3633; }
+.xml-highlight { color: #ff7b72; }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ============================================================ -->
+<!-- TITLE -->
+<!-- ============================================================ -->
+<section>
+<h1>SSO & SAML Security</h1>
+<h3>for Python Developers</h3>
+<p style="margin-top:40px;color:#8b949e;">10 Episodes &bull; 95 Minutes &bull; L1-L3</p>
+<p style="color:#58a6ff;">Verifhai &bull; HAIAMM Education & Guidance</p>
+</section>
+
+<!-- ============================================================ -->
+<!-- SERIES OVERVIEW -->
+<!-- ============================================================ -->
+<section>
+<h2>Series Overview</h2>
+<table style="font-size:0.7em;">
+<tr><th>Ep</th><th>Topic</th><th>Level</th></tr>
+<tr><td>01</td><td>SAML Architecture & SSO Flow</td><td><span class="badge badge-l1">L1</span></td></tr>
+<tr><td>02</td><td>Signature Validation</td><td><span class="badge badge-l1">L1</span></td></tr>
+<tr><td>03</td><td>XXE Injection Through SAML</td><td><span class="badge badge-l1">L1</span></td></tr>
+<tr><td>04</td><td>Replay Attacks</td><td><span class="badge badge-l1">L1</span></td></tr>
+<tr><td>05</td><td>XML Signature Wrapping (XSW)</td><td><span class="badge badge-l2">L2</span></td></tr>
+<tr><td>06</td><td>Comment Injection & Audience Confusion</td><td><span class="badge badge-l2">L2</span></td></tr>
+<tr><td>07</td><td>Session Security After SAML</td><td><span class="badge badge-l2">L2</span></td></tr>
+<tr><td>08</td><td>Golden SAML & Certificates</td><td><span class="badge badge-l3">L3</span></td></tr>
+<tr><td>09</td><td>SAML vs OIDC</td><td><span class="badge badge-l3">L3</span></td></tr>
+<tr><td>10</td><td>Multi-IdP & Production SP</td><td><span class="badge badge-l3">L3</span></td></tr>
+</table>
+</section>
+
+<!-- ============================================================ -->
+<!-- E01: SAML ARCHITECTURE -->
+<!-- ============================================================ -->
+<section>
+<section>
+<div class="episode-card">
+<h2>Episode 01</h2>
+<h1>SAML Architecture & How SSO Works</h1>
+<p><span class="badge badge-l1">Level 1</span> &bull; 9 minutes</p>
+</div>
+</section>
+
+<section>
+<h2>The Three Players</h2>
+<table>
+<tr><th>Component</th><th>Role</th><th>Example</th></tr>
+<tr><td><strong>Identity Provider (IdP)</strong></td><td>Authenticates users, issues assertions</td><td>Okta, Azure AD, OneLogin</td></tr>
+<tr><td><strong>Service Provider (SP)</strong></td><td>Trusts IdP assertions for access</td><td>Your application</td></tr>
+<tr><td><strong>User Browser</strong></td><td>Carries SAML response between IdP and SP</td><td>Chrome, Firefox</td></tr>
+</table>
+</section>
+
+<section>
+<h2>SP-Initiated SSO Flow</h2>
+<div class="highlight-box" style="font-size:0.85em;">
+<ol>
+<li>User visits your app (SP)</li>
+<li>SP generates AuthnRequest &rarr; redirects to IdP</li>
+<li>User authenticates at IdP (password, MFA)</li>
+<li>IdP generates SAML Response with signed Assertion</li>
+<li>IdP POSTs SAML Response to SP's ACS endpoint</li>
+<li>SP validates signature, extracts claims, creates session</li>
+</ol>
+</div>
+<div class="danger-box">
+The SAML response travels through the browser. The user can modify it.<br>
+<strong>Signature validation is the only thing preventing forgery.</strong>
+</div>
+</section>
+
+<section>
+<h2>SAML Response Structure</h2>
+<pre><code class="xml">&lt;samlp:Response Destination="https://app.example.com/acs"&gt;
+  &lt;saml:Assertion&gt;
+    &lt;ds:Signature&gt;...&lt;/ds:Signature&gt;
+    &lt;saml:Subject&gt;
+      &lt;saml:NameID&gt;user@company.com&lt;/saml:NameID&gt;
+    &lt;/saml:Subject&gt;
+    &lt;saml:Conditions NotOnOrAfter="..."&gt;
+      &lt;saml:AudienceRestriction&gt;
+        &lt;saml:Audience&gt;https://app.example.com&lt;/saml:Audience&gt;
+      &lt;/saml:AudienceRestriction&gt;
+    &lt;/saml:Conditions&gt;
+    &lt;saml:AttributeStatement&gt;
+      &lt;saml:Attribute Name="role"&gt;
+        &lt;saml:AttributeValue&gt;admin&lt;/saml:AttributeValue&gt;
+      &lt;/saml:Attribute&gt;
+    &lt;/saml:AttributeStatement&gt;
+  &lt;/saml:Assertion&gt;
+&lt;/samlp:Response&gt;</code></pre>
+</section>
+
+<section>
+<h2>SAML Attack Surface</h2>
+<table>
+<tr><th>Attack</th><th>What It Does</th></tr>
+<tr><td>Missing signature validation</td><td>Forge any assertion</td></tr>
+<tr><td>XXE injection</td><td>Read server files via XML</td></tr>
+<tr><td>XML Signature Wrapping</td><td>Bypass valid signature check</td></tr>
+<tr><td>Comment injection</td><td>Change identity via XML comments</td></tr>
+<tr><td>Replay attacks</td><td>Re-use captured responses</td></tr>
+<tr><td>Golden SAML</td><td>Forge with stolen signing key</td></tr>
+</table>
+</section>
+</section>
+
+<!-- ============================================================ -->
+<!-- E02: SIGNATURE VALIDATION -->
+<!-- ============================================================ -->
+<section>
+<section>
+<div class="episode-card">
+<h2>Episode 02</h2>
+<h1>Signature Validation &mdash; The Foundation</h1>
+<p><span class="badge badge-l1">Level 1</span> &bull; 8 minutes</p>
+</div>
+</section>
+
+<section>
+<h2 class="vuln">Vulnerable: No Signature Check</h2>
+<pre><code class="python"># VULNERABLE: Parsing SAML without signature verification
+from lxml import etree
+import base64
+
+def process_saml_response(saml_response_b64):
+    xml_bytes = base64.b64decode(saml_response_b64)
+    root = etree.fromstring(xml_bytes)
+
+    ns = {'saml': 'urn:oasis:names:tc:SAML:2.0:assertion'}
+    name_id = root.find('.//saml:NameID', ns)
+    return {"user": name_id.text}  # Trusting unsigned data!</code></pre>
+<div class="danger-box">
+Attacker crafts any NameID they want. <code>admin@company.com</code>? Done.
+</div>
+</section>
+
+<section>
+<h2 class="secure">Fix: python3-saml</h2>
+<pre><code class="python">from onelogin.saml2.auth import OneLogin_Saml2_Auth
+
+def process_saml_response_secure(request_data, saml_settings):
+    auth = OneLogin_Saml2_Auth(request_data, old_settings=saml_settings)
+    auth.process_response()
+
+    errors = auth.get_errors()
+    if errors:
+        raise SecurityError(f"Validation failed: {', '.join(errors)}")
+
+    if not auth.is_authenticated():
+        raise SecurityError("Authentication failed")
+
+    return {
+        "name_id": auth.get_nameid(),
+        "attributes": auth.get_attributes(),
+    }</code></pre>
+</section>
+
+<section>
+<h2>What python3-saml Validates</h2>
+<table>
+<tr><th>Check</th><th>Prevents</th></tr>
+<tr><td>Signature</td><td>Forged assertions</td></tr>
+<tr><td>Certificate matching</td><td>Wrong signing key</td></tr>
+<tr><td>NotBefore / NotOnOrAfter</td><td>Expired assertions</td></tr>
+<tr><td>Audience</td><td>Cross-tenant attacks</td></tr>
+<tr><td>Destination</td><td>Response redirect</td></tr>
+<tr><td>InResponseTo</td><td>Unsolicited responses</td></tr>
+</table>
+<div class="success-box" style="margin-top:20px;">
+<strong>The #1 SAML setting:</strong> <code>"strict": True</code>
+</div>
+</section>
+</section>
+
+<!-- ============================================================ -->
+<!-- E03: XXE -->
+<!-- ============================================================ -->
+<section>
+<section>
+<div class="episode-card">
+<h2>Episode 03</h2>
+<h1>XXE Injection Through SAML</h1>
+<p><span class="badge badge-l1">Level 1</span> &bull; 7 minutes</p>
+</div>
+</section>
+
+<section>
+<h2>The Attack</h2>
+<pre><code class="xml">&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE foo [
+  &lt;!ENTITY xxe SYSTEM "file:///etc/passwd"&gt;
+]&gt;
+&lt;samlp:Response&gt;
+  &lt;saml:Assertion&gt;
+    &lt;saml:Subject&gt;
+      &lt;saml:NameID&gt;&amp;xxe;&lt;/saml:NameID&gt;
+    &lt;/saml:Subject&gt;
+  &lt;/saml:Assertion&gt;
+&lt;/samlp:Response&gt;</code></pre>
+<div class="danger-box">
+<code>&amp;xxe;</code> resolves to <code>/etc/passwd</code> contents.<br>
+The attacker reads server files through the SAML login flow.
+</div>
+</section>
+
+<section>
+<h2 class="secure">Fix: defusedxml</h2>
+<pre><code class="python">import defusedxml.lxml as safe_lxml
+from defusedxml import DefusedXmlException
+
+def parse_saml_response_secure(saml_response_b64):
+    xml_bytes = base64.b64decode(saml_response_b64)
+    try:
+        root = safe_lxml.fromstring(xml_bytes)  # Blocks XXE!
+    except DefusedXmlException as e:
+        raise SecurityError(f"Malicious XML detected: {e}")
+    ...</code></pre>
+<table style="margin-top:20px;">
+<tr><th>Parser</th><th>XXE Safe</th><th>Notes</th></tr>
+<tr><td><code>lxml</code> (default)</td><td class="vuln">No</td><td>Resolves external entities</td></tr>
+<tr><td><code>defusedxml.lxml</code></td><td class="secure">Yes</td><td>Blocks everything dangerous</td></tr>
+<tr><td>Custom XMLParser</td><td class="warn">Depends</td><td>Must set 4 flags correctly</td></tr>
+</table>
+</section>
+
+<section>
+<h2>Three XXE Attack Vectors</h2>
+<table>
+<tr><th>Vector</th><th>Payload</th><th>Impact</th></tr>
+<tr><td>File reading</td><td><code>file:///etc/passwd</code></td><td>Read server files</td></tr>
+<tr><td>SSRF</td><td><code>http://169.254.169.254/...</code></td><td>Steal cloud credentials</td></tr>
+<tr><td>DoS</td><td>Billion laughs (nested entities)</td><td>Exhaust server memory</td></tr>
+</table>
+<div class="success-box">
+<code>defusedxml</code> blocks all three. One library. Full protection.
+</div>
+</section>
+</section>
+
+<!-- ============================================================ -->
+<!-- E04: REPLAY -->
+<!-- ============================================================ -->
+<section>
+<section>
+<div class="episode-card">
+<h2>Episode 04</h2>
+<h1>Replay Attacks</h1>
+<p><span class="badge badge-l1">Level 1</span> &bull; 8 minutes</p>
+</div>
+</section>
+
+<section>
+<h2>Three-Layer Replay Protection</h2>
+<pre><code class="python">import redis
+response_cache = redis.Redis(host='localhost', port=6379, db=1)
+
+def handle_saml_acs_secure(request_data, saml_settings):
+    auth = OneLogin_Saml2_Auth(request_data, old_settings=saml_settings)
+    auth.process_response()
+
+    # Layer 1: Response ID tracking
+    response_id = auth.get_last_response_id()
+    cache_key = f"saml_response:{response_id}"
+    if response_cache.exists(cache_key):
+        raise SecurityError("Replay detected!")
+    response_cache.setex(cache_key, 600, "processed")
+
+    # Layer 2: InResponseTo validation (match our AuthnRequest)
+    # Layer 3: NotOnOrAfter (enforced by python3-saml)</code></pre>
+<table style="margin-top:20px;">
+<tr><th>Layer</th><th>Check</th><th>Prevents</th></tr>
+<tr><td>Response ID</td><td>Seen this ID before?</td><td>Direct replay</td></tr>
+<tr><td>InResponseTo</td><td>Matches our request?</td><td>Unsolicited injection</td></tr>
+<tr><td>NotOnOrAfter</td><td>Within time window?</td><td>Delayed replay</td></tr>
+</table>
+</section>
+</section>
+
+<!-- ============================================================ -->
+<!-- E05: XSW -->
+<!-- ============================================================ -->
+<section>
+<section>
+<div class="episode-card">
+<h2>Episode 05</h2>
+<h1>XML Signature Wrapping (XSW)</h1>
+<p><span class="badge badge-l2">Level 2</span> &bull; 12 minutes</p>
+</div>
+</section>
+
+<section>
+<h2>How XSW Works</h2>
+<div class="highlight-box" style="font-size:0.85em;">
+<ol>
+<li>Attacker intercepts a legitimate signed SAML response</li>
+<li>The signature covers <code>&lt;Assertion ID="_abc123"&gt;</code></li>
+<li>Attacker <strong>moves</strong> the signed assertion to a non-processed location</li>
+<li>Attacker inserts a <strong>new, unsigned assertion</strong> where the app reads</li>
+<li>Signature verification <span class="secure">passes</span> (signed element exists)</li>
+<li>Application reads claims from the <span class="vuln">unsigned, forged assertion</span></li>
+</ol>
+</div>
+</section>
+
+<section>
+<h2 class="vuln">Vulnerable: Wrong Element</h2>
+<pre><code class="python"># Verify signature - passes!
+XMLVerifier().verify(root, x509_cert=idp_cert)
+
+# VULNERABLE: extracts from 'root' not from verified element
+name_id = root.find('.//saml:NameID', ns)
+return name_id.text  # Returns attacker's NameID!</code></pre>
+<h2 class="secure" style="margin-top:30px;">Fix: Verified Element Only</h2>
+<pre><code class="python"># Get the VERIFIED element
+result = XMLVerifier().verify(root, x509_cert=idp_cert)
+verified_xml = result.signed_xml  # The signed element!
+
+# Extract from VERIFIED element only
+name_id = verified_xml.find('.//saml:NameID', ns)
+return name_id.text  # Returns the real, signed NameID</code></pre>
+</section>
+
+<section>
+<h2>XSW Variants</h2>
+<table>
+<tr><th>Variant</th><th>Technique</th></tr>
+<tr><td>XSW1</td><td>Cloned Response wraps original</td></tr>
+<tr><td>XSW2</td><td>Signature detached from assertion</td></tr>
+<tr><td>XSW3</td><td>Malicious assertion as sibling</td></tr>
+<tr><td>XSW4</td><td>Malicious assertion wraps original</td></tr>
+<tr><td>XSW5-8</td><td>Combined positioning techniques</td></tr>
+</table>
+<div class="success-box">
+<strong>One rule prevents all XSW:</strong> Extract claims only from the verified element.
+Or use python3-saml with <code>strict: True</code>.
+</div>
+</section>
+</section>
+
+<!-- ============================================================ -->
+<!-- E06: COMMENT INJECTION & AUDIENCE -->
+<!-- ============================================================ -->
+<section>
+<section>
+<div class="episode-card">
+<h2>Episode 06</h2>
+<h1>Comment Injection & Audience Confusion</h1>
+<p><span class="badge badge-l2">Level 2</span> &bull; 10 minutes</p>
+</div>
+</section>
+
+<section>
+<h2>Comment Injection in NameID</h2>
+<pre><code class="xml">&lt;saml:NameID&gt;user@evil.com&lt;!-- --&gt;.legit.com&lt;/saml:NameID&gt;</code></pre>
+<table>
+<tr><th>Parser Reads</th><th>Identity</th></tr>
+<tr><td><code>.text</code></td><td class="vuln"><code>user@evil.com</code> (first text node only)</td></tr>
+<tr><td><code>itertext()</code></td><td class="secure"><code>user@evil.com.legit.com</code> (all text nodes)</td></tr>
+</table>
+<pre><code class="python"># SECURE: Reject NameIDs with comments
+raw_xml = etree.tostring(name_id_elem, encoding='unicode')
+if '&lt;!--' in raw_xml:
+    raise SecurityError("NameID contains comments - injection!")</code></pre>
+</section>
+
+<section>
+<h2>Cross-Application Assertion Replay</h2>
+<div class="danger-box">
+<strong>Scenario:</strong> App A and App B share the same IdP.<br>
+User is <em>viewer</em> on App A, <em>admin</em> on App B.<br>
+With <code>strict: False</code>, user replays App B admin assertion to App A.
+</div>
+<h3 class="secure">Fix: One Boolean</h3>
+<pre><code class="python">saml_settings = {
+    "strict": True,  # Enforces Destination + Audience + Recipient
+}</code></pre>
+<table style="margin-top:15px;">
+<tr><th>Check</th><th>strict: False</th><th>strict: True</th></tr>
+<tr><td>Destination</td><td class="vuln">Skipped</td><td class="secure">Must match ACS URL</td></tr>
+<tr><td>Audience</td><td class="vuln">Skipped</td><td class="secure">Must match entityId</td></tr>
+<tr><td>Recipient</td><td class="vuln">Skipped</td><td class="secure">Must match ACS URL</td></tr>
+</table>
+</section>
+</section>
+
+<!-- ============================================================ -->
+<!-- E07: SESSION SECURITY -->
+<!-- ============================================================ -->
+<section>
+<section>
+<div class="episode-card">
+<h2>Episode 07</h2>
+<h1>Session Security After SAML</h1>
+<p><span class="badge badge-l2">Level 2</span> &bull; 9 minutes</p>
+</div>
+</section>
+
+<section>
+<h2 class="vuln">The Post-Auth Gap</h2>
+<pre><code class="python"># Perfect SAML validation... then weak session
+app.secret_key = "dev-secret-key"  # Weak!
+
+session['user'] = auth.get_nameid()
+session['roles'] = auth.get_attributes().get('role', [])
+return redirect('/dashboard')
+# No session regeneration, no cookie flags, no timeout</code></pre>
+</section>
+
+<section>
+<h2 class="secure">Hardened Session</h2>
+<pre><code class="python">app.secret_key = secrets.token_hex(32)  # Strong!
+
+app.config.update(
+    SESSION_COOKIE_SECURE=True,       # HTTPS only
+    SESSION_COOKIE_HTTPONLY=True,      # No JavaScript
+    SESSION_COOKIE_SAMESITE='Lax',    # CSRF protection
+    PERMANENT_SESSION_LIFETIME=3600,  # 1 hour timeout
+)
+
+@app.route('/saml/acs', methods=['POST'])
+def saml_acs():
+    auth = OneLogin_Saml2_Auth(prepare_request(request), settings)
+    auth.process_response()
+    if not auth.is_authenticated(): abort(403)
+
+    session.clear()          # Fixation protection
+    session.regenerate()     # New session ID
+    session['user'] = auth.get_nameid()
+    session['authenticated_at'] = datetime.utcnow().isoformat()
+    session.permanent = True # Enable timeout</code></pre>
+</section>
+</section>
+
+<!-- ============================================================ -->
+<!-- E08: GOLDEN SAML -->
+<!-- ============================================================ -->
+<section>
+<section>
+<div class="episode-card">
+<h2>Episode 08</h2>
+<h1>Golden SAML & Certificate Management</h1>
+<p><span class="badge badge-l3">Level 3</span> &bull; 12 minutes</p>
+</div>
+</section>
+
+<section>
+<h2>Golden SAML</h2>
+<div class="danger-box">
+Attacker steals the IdP's token-signing private key.<br>
+Can forge any assertion, for any user, with any roles &mdash; forever.<br>
+<strong>No IdP logs. Survives password resets. Survives MFA rotation.</strong>
+</div>
+<table>
+<tr><th>Impact</th><th>Description</th></tr>
+<tr><td>Universal access</td><td>Forge assertions for any user in any SP</td></tr>
+<tr><td>No logging</td><td>IdP has no record of forged authentications</td></tr>
+<tr><td>Persistence</td><td>Survives all credential changes</td></tr>
+<tr><td>Stealth</td><td>SP sees a perfectly valid signed assertion</td></tr>
+</table>
+</section>
+
+<section>
+<h2>Detection: Cross-Reference Logs</h2>
+<pre><code class="python">def detect_golden_saml(saml_response, auth):
+    indicators = []
+
+    # 1. Assertion outside business hours
+    if is_outside_business_hours(assertion_time):
+        indicators.append("Off-hours assertion")
+
+    # 2. No matching IdP login event (STRONGEST SIGNAL)
+    if not verify_idp_login_event(name_id, assertion_time):
+        indicators.append("No IdP login event!")
+
+    # 3. Unusual validity window
+    if validity_window > 3600:
+        indicators.append(f"Long validity: {validity_window}s")
+
+    if indicators:
+        alert_soc_team("Possible Golden SAML", indicators)</code></pre>
+</section>
+
+<section>
+<h2>Mitigation Checklist</h2>
+<div style="text-align:left;">
+<ol>
+<li>Protect IdP signing key (HSM storage)</li>
+<li>Regularly rotate signing certificates</li>
+<li>Monitor for certificate changes at IdP</li>
+<li>Cross-reference SP auth with IdP audit logs</li>
+<li>Alert on anomalous assertions</li>
+<li>Incident response plan includes cert rotation</li>
+</ol>
+</div>
+</section>
+</section>
+
+<!-- ============================================================ -->
+<!-- E09: SAML vs OIDC -->
+<!-- ============================================================ -->
+<section>
+<section>
+<div class="episode-card">
+<h2>Episode 09</h2>
+<h1>SAML vs OIDC Decision Framework</h1>
+<p><span class="badge badge-l3">Level 3</span> &bull; 8 minutes</p>
+</div>
+</section>
+
+<section>
+<h2>Head-to-Head Comparison</h2>
+<table style="font-size:0.75em;">
+<tr><th>Dimension</th><th>SAML 2.0</th><th>OIDC</th></tr>
+<tr><td>Format</td><td>XML + Signatures</td><td>JSON + JWTs</td></tr>
+<tr><td>Mobile/SPA</td><td class="vuln">Poor</td><td class="secure">Excellent</td></tr>
+<tr><td>Enterprise SSO</td><td class="secure">Standard</td><td>Growing</td></tr>
+<tr><td>Complexity</td><td class="warn">High</td><td>Moderate</td></tr>
+<tr><td>Attack Surface</td><td>XSW, XXE, comments</td><td>alg:none, key confusion</td></tr>
+<tr><td>Microservices</td><td class="warn">Awkward</td><td class="secure">Native (JWT)</td></tr>
+</table>
+</section>
+
+<section>
+<h2>When to Use Which</h2>
+<div style="display:flex;gap:20px;">
+<div style="flex:1;">
+<h3>SAML</h3>
+<ul style="font-size:0.8em;">
+<li>Legacy IdPs (ADFS)</li>
+<li>Regulatory requirements</li>
+<li>Existing SAML infrastructure</li>
+<li>B2B federation with partners</li>
+</ul>
+</div>
+<div style="flex:1;">
+<h3>OIDC</h3>
+<ul style="font-size:0.8em;">
+<li>Greenfield applications</li>
+<li>Mobile / SPA</li>
+<li>API-to-API auth</li>
+<li>Modern IdPs (Okta, Auth0)</li>
+<li>Microservices</li>
+</ul>
+</div>
+</div>
+<div class="highlight-box" style="margin-top:20px;">
+<strong>Production pattern:</strong> Support both through a normalized identity layer.
+</div>
+</section>
+</section>
+
+<!-- ============================================================ -->
+<!-- E10: MULTI-IDP & PRODUCTION -->
+<!-- ============================================================ -->
+<section>
+<section>
+<div class="episode-card">
+<h2>Episode 10</h2>
+<h1>Multi-IdP Federation & Production SP</h1>
+<p><span class="badge badge-l3">Level 3</span> &bull; 12 minutes</p>
+</div>
+</section>
+
+<section>
+<h2>Multi-Tenant Challenges</h2>
+<table>
+<tr><th>Challenge</th><th>Impact</th></tr>
+<tr><td>IdP confusion</td><td>Authentication bypass</td></tr>
+<tr><td>Certificate mixing</td><td>Signature bypass</td></tr>
+<tr><td>Tenant isolation</td><td>Data breach</td></tr>
+<tr><td>Metadata poisoning</td><td>Man-in-the-middle</td></tr>
+</table>
+<div class="success-box" style="margin-top:20px;">
+<strong>Critical control:</strong> Domain allowlisting per tenant.
+Verify NameID domain matches tenant's registered domains.
+</div>
+</section>
+
+<section>
+<h2>Tenant Isolation Controls</h2>
+<pre><code class="python">class MultiIdPServiceProvider:
+    def process_response(self, request):
+        tenant = self.get_tenant_from_request(request)
+        settings = self.build_saml_settings(tenant)  # Per-tenant
+        auth = OneLogin_Saml2_Auth(prepare_request(request), settings)
+        auth.process_response()
+
+        name_id = auth.get_nameid()
+
+        # CRITICAL: Domain allowlisting
+        email_domain = name_id.split('@')[-1]
+        if email_domain not in tenant.allowed_domains:
+            raise SecurityError(f"Domain not allowed for tenant")</code></pre>
+<table style="margin-top:15px;font-size:0.75em;">
+<tr><th>Control</th><th>Implementation</th></tr>
+<tr><td>Separate SP entity IDs</td><td><code>app.com/tenant-{id}/metadata</code></td></tr>
+<tr><td>Separate ACS URLs</td><td><code>app.com/tenant-{id}/saml/acs</code></td></tr>
+<tr><td>Domain allowlisting</td><td>Per-tenant verified domains</td></tr>
+<tr><td>Certificate isolation</td><td>Per-tenant IdP cert</td></tr>
+<tr><td>Response tracking</td><td><code>saml:{tenant}:response:{id}</code></td></tr>
+</table>
+</section>
+
+<section>
+<h2>Production SP: SecureSAMLServiceProvider</h2>
+<div class="small-code">
+<pre><code class="python">class SecureSAMLServiceProvider:
+    def __init__(self, app, saml_settings, redis_url):
+        self.saml_settings = self._enforce_security(saml_settings)
+        self.response_cache = redis.from_url(redis_url)
+        app.secret_key = secrets.token_hex(32)
+        # Register /saml/login, /saml/acs, /saml/slo, /saml/metadata
+
+    def _enforce_security(self, settings):
+        settings['strict'] = True
+        settings['security']['wantAssertionsSigned'] = True
+        settings['security']['wantMessagesSigned'] = True
+        return settings
+
+# Usage:
+saml_sp = SecureSAMLServiceProvider(app, settings, redis_url)
+
+@app.route('/dashboard')
+@saml_sp.require_auth
+def dashboard():
+    return f"Welcome, {session['user']}!"</code></pre>
+</div>
+</section>
+</section>
+
+<!-- ============================================================ -->
+<!-- SAML SECURITY CHECKLIST -->
+<!-- ============================================================ -->
+<section>
+<section>
+<h2>SAML Security Checklist</h2>
+<div style="text-align:left;font-size:0.8em;">
+<p><strong>Configuration</strong></p>
+<ul>
+<li><code>strict: True</code></li>
+<li><code>wantAssertionsSigned: True</code></li>
+<li><code>wantMessagesSigned: True</code></li>
+<li>SHA-256 algorithms (not SHA-1)</li>
+</ul>
+<p><strong>XML Parsing</strong></p>
+<ul>
+<li><code>defusedxml</code> for all SAML XML</li>
+<li>External entities disabled</li>
+</ul>
+<p><strong>Signature</strong></p>
+<ul>
+<li>Claims from verified element only (XSW)</li>
+<li>NameID with <code>itertext()</code> (comment injection)</li>
+</ul>
+</div>
+</section>
+
+<section>
+<h2>SAML Security Checklist (cont.)</h2>
+<div style="text-align:left;font-size:0.8em;">
+<p><strong>Replay Protection</strong></p>
+<ul>
+<li>Response IDs tracked in Redis with TTL</li>
+<li>InResponseTo validated</li>
+</ul>
+<p><strong>Session Management</strong></p>
+<ul>
+<li>Session regenerated after auth</li>
+<li>HttpOnly + Secure + SameSite cookies</li>
+<li>Session timeout (1 hour)</li>
+<li>SLO implemented</li>
+</ul>
+<p><strong>Certificate Management</strong></p>
+<ul>
+<li>Rotation supported and monitored</li>
+<li>Expiration alerts</li>
+<li>Golden SAML detection</li>
+</ul>
+</div>
+</section>
+</section>
+
+<!-- ============================================================ -->
+<!-- END -->
+<!-- ============================================================ -->
+<section>
+<h1>Thank You</h1>
+<h3>Test your knowledge</h3>
+<p>Take the L1, L2, or L3 assessments</p>
+<p style="margin-top:20px;font-size:0.85em;">
+<strong>Two rules that prevent most SAML attacks:</strong><br>
+1. Use a library (don't parse XML yourself)<br>
+2. Set <code>strict: True</code>
+</p>
+<p style="margin-top:40px;color:#58a6ff;">Verifhai &bull; HAIAMM Education & Guidance</p>
+<p style="color:#8b949e;">EG-LAB-SAML-001 &bull; v1.0</p>
+</section>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script>
+Reveal.initialize({
+  hash: true,
+  slideNumber: 'c/t',
+  showSlideNumber: 'all',
+  transition: 'slide',
+  plugins: [RevealHighlight, RevealNotes]
+});
+</script>
+</body>
+</html>

